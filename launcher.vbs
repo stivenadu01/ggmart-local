@@ -1,0 +1,1 @@
+CreateObject("Wscript.Shell").Run "cmd /c D:\ggmart-local\ggmart.bat", 0, False

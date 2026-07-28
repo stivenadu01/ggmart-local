@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+/* 🎨 THEME (GLOBAL DESIGN) */
+@theme {
+  --color-primary: #22c55e;
+  --color-primary-dark: #16a34a;
+  --color-primary-light: #4ade80;
+
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-base: 0.5rem;
+}
+
+/* 🔧 BASE STYLE (CSS Standar) */
+body {
+  @apply bg-white text-gray-800 font-inter;
+}
+
+h1 {
+  @apply text-2xl md:text-3xl font-bold;
+}
+
+h2 {
+  @apply text-lg md:text-xl font-semibold;
+}
+
+h3 {
+  @apply text-base md:text-lg font-medium;
+}
+
+button,
+a {
+  @apply hover:cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+/* 🧩 COMPONENT & UTILITY CLASSES (Tailwind v4 Style) */
+
+@utility btn {
+  @apply px-4 py-2 rounded-md font-medium transition w-full;
+}
+
+@utility btn-rounded {
+  @apply w-auto text-sm rounded-full;
+}
+
+@utility btn-primary {
+  @apply px-4 py-2 rounded-md font-medium transition bg-primary text-white hover:bg-primary-dark w-full;
+}
+
+@utility btn-secondary {
+  @apply px-4 py-2 rounded-md font-medium transition bg-gray-200 hover:bg-gray-300 w-full;
+}
+
+@utility btn-danger {
+  @apply px-4 py-2 rounded-md font-medium transition bg-red-500 text-white hover:bg-red-600 w-full;
+}
+
+@utility btn-outline {
+  @apply px-4 py-2 rounded-md font-medium transition border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white w-full;
+}
+
+@utility btn-link {
+  @apply text-gray-800 hover:text-primary underline;
+}
+
+@utility btn-link-primary {
+  @apply text-primary hover:text-primary-dark underline;
+}
+
+@utility btn-link-danger {
+  @apply text-red-500 hover:text-red-700 underline;
+}
+
+@utility btn-outline-primary {
+  @apply px-4 py-2 rounded-md font-medium transition border border-primary text-primary hover:bg-primary hover:text-white w-full;
+}
+
+@utility btn-outline-danger {
+  @apply px-4 py-2 rounded-md font-medium transition border border-red-500 text-red-500 hover:bg-red-500 hover:text-white w-full;
+}
+
+@utility input {
+  @apply w-full px-3 py-2 border rounded-md outline-none
+         focus:ring-2 focus:ring-[--color-primary-light] transition disabled:bg-gray-100 disabled:text-gray-500;
+}
+
+@utility form-group {
+  @apply space-y-1;
+}
+
+@utility label {
+  @apply block text-sm font-medium text-slate-700;
+}
+
+@utility input-error {
+  @apply border-red-500 focus:ring-red-300;
+}
+
+@utility card {
+  @apply bg-white rounded-xl shadow shadow-white p-4;
+}
+
+@utility table {
+  @apply w-full text-sm;
+}
+
+/* Untuk sub-elemen, gunakan sintaks CSS standar / nesting */
+.table {
+  @apply w-full text-sm bg-white rounded-3xl shadow-sm overflow-hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th {
+    @apply text-left bg-slate-50 text-slate-600 font-semibold px-4 py-3;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  td {
+    @apply px-2 py-3 text-slate-700 bg-white;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover td {
+    @apply bg-slate-50;
+  }
+}
+
+@utility modal-backdrop {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center h-full z-50;
+}
+
+@utility modal-box {
+  @apply bg-white rounded-lg p-6 shadow-lg w-full max-w-md;
+}
+
+/* 🔧 LAYOUT UTILITIES */
+
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+
+@utility flex-between {
+  @apply flex items-center justify-between;
+}
+
+@utility flex-end {
+  @apply flex items-center justify-end;
+}
+
+@utility px-d {
+  @apply px-4 md:px-8 lg:px-16;
+}
+
+@utility section-center {
+  @apply min-h-[80dvh] flex items-center justify-center;
+}
+
+/* 🎨 EFFECT */
+
+@utility glass {
+  @apply bg-white/70 backdrop-blur-md;
+}
+
+/* 🔗 LINK */
+
+@utility link {
+  @apply hover:text-primary transition;
+}
+
+@utility link-lg {
+  @apply text-2xl font-bold tracking-tight hover:text-primary;
+}
+
+@utility icon-btn {
+  @apply w-6 h-6 flex items-center justify-center;
+}
+
+@utility icon-left {
+  @apply w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2;
+}
+
+/* Menggunakan CSS Variabel dari Theme v4 */
+@utility text-primary {
+  color: var(--color-primary);
+}
+
+@utility bg-primary {
+  background-color: var(--color-primary);
+}
+
+@utility border-primary {
+  border-color: var(--color-primary);
+}
+/* =========================
+   🧩 DROPDOWN & FILTER UI
+========================= */
+
+@utility dropdown {
+  @apply relative inline-block;
+}
+
+@utility dropdown-menu {
+  @apply absolute left-0 mt-2 w-auto max-h-[70dvh] overflow-y-auto
+         bg-white/90 backdrop-blur-md
+         border border-gray-200 rounded-xl shadow-xl
+         z-49;
+}
+
+@utility dropdown-item {
+  @apply px-3 py-2 text-sm hover:bg-gray-100 hover:text-gray-800 cursor-pointer whitespace-nowrap;
+}
+
+@utility dropdown-item-active {
+  @apply bg-primary text-white;
+}
+
+/* FILTER BUTTON */
+@utility btn-filter {
+  @apply inline-flex items-center gap-2 px-3 py-2
+         border border-gray-300 rounded-md text-sm
+         hover:bg-gray-100
+         cursor-pointer
+         w-auto whitespace-nowrap transition;
+}
+
+@utility btn-filter-active {
+  @apply border-primary text-primary;
+}
+
+/* Scrollbar hidden by default, show on hover (atau saat interaksi) */
+.overflow-x-auto,
+.overflow-y-auto {
+  /* Firefox */
+  scrollbar-width: none; /* hide */
+  scrollbar-color: transparent transparent;
+  /* IE10+ */
+  -ms-overflow-style: none;
+}
+
+/* Hide webkit scrollbars by default */
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+
+/* Show scrollbar when hovering the container */
+.overflow-x-auto:hover::-webkit-scrollbar,
+.overflow-y-auto:hover::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.overflow-x-auto:hover::-webkit-scrollbar-track,
+.overflow-y-auto:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto:hover::-webkit-scrollbar-thumb,
+.overflow-y-auto:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+.overflow-x-auto:hover::-webkit-scrollbar-thumb:hover,
+.overflow-y-auto:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Firefox: show thin scrollbar on hover */
+.overflow-x-auto:hover,
+.overflow-y-auto:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
