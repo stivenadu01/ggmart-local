@@ -1,154 +1,221 @@
-<div class="p-4 space-y-4" x-data="kasirPage()">
+<div class="space-y-5 p-4 sm:p-5 lg:p-7" x-data="kasirPage()">
 
-  <!-- HEADER -->
-  <div class="flex-between">
-    <div>
-      <h1>Kasir</h1>
-      <p class="text-gray-500 text-sm">Input transaksi penjualan</p>
+  <!-- PAGE HEADER -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="min-w-0">
+      <div class="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
+        <span>Penjualan</span>
+        <span aria-hidden="true">•</span>
+        <span>Kasir</span>
+      </div>
+      <h1 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">Kasir</h1>
+      <p class="mt-1 text-sm text-slate-500">Buat transaksi penjualan dengan cepat dan akurat.</p>
+    </div>
+
+    <div class="hidden items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 shadow-sm md:flex">
+      <kbd class="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono font-semibold text-slate-600">Ctrl</kbd>
+      <span>+</span>
+      <kbd class="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono font-semibold text-slate-600">K</kbd>
+      <span>untuk cari produk</span>
     </div>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-4">
+  <div class="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.85fr)]">
 
-    <!-- ================= LEFT: PRODUK ================= -->
-    <div class="bg-white rounded-xl shadow border p-4 flex flex-col">
+    <!-- PRODUK -->
+    <section class="card min-w-0 p-4 sm:p-5" aria-labelledby="kasir-produk-title">
+      <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 id="kasir-produk-title" class="text-base font-bold text-slate-900">Pilih Produk</h2>
+          <p class="mt-0.5 text-xs text-slate-500">Klik produk untuk memasukkannya ke keranjang.</p>
+        </div>
+        <span class="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"
+          x-text="produk.length + ' produk'">
+        </span>
+      </div>
+
       <!-- SEARCH -->
-      <input
-        type="text"
-        x-model="search"
-        @input.debounce.300="loadProduk()"
-        @keydown.enter.prevent="tambahDariInput()"
-        placeholder="Cari produk..."
-        class="input text-lg mb-4"
-        x-ref="searchInput">
-
-      <!-- LIST -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 overflow-auto">
-
-        <template x-for="p in produk" :key="p.kode_produk">
-          <div
-            @click="tambah(p)"
-            class="border rounded-lg p-2 cursor-pointer hover:bg-gray-50">
-
-            <div class="text-sm font-semibold truncate" x-text="p.nama_produk"></div>
-
-            <div class="text-xs text-gray-400" x-text="p.nama_kategori"></div>
-
-            <div class="text-green-600 font-bold text-sm mt-1"
-              x-text="utils.formatRupiah(p.harga_jual)"></div>
-
-            <div class="text-xs mt-1"
-              :class="p.stok <= 0 ? 'text-red-500' : 'text-gray-500'"
-              x-text="p.stok > 0 ? 'Stok: ' + p.stok : 'Habis'">
-            </div>
-
-          </div>
-        </template>
-
-        <template x-if="produk.length === 0">
-          <div class="col-span-full text-center text-gray-400 py-6">
-            Produk tidak ditemukan
-          </div>
-        </template>
-
+      <div class="relative mb-4">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-4-4" stroke-linecap="round"></path>
+        </svg>
+        <input
+          type="search"
+          x-model="search"
+          @input.debounce.300="loadProduk()"
+          @keydown.enter.prevent="tambahDariInput()"
+          placeholder="Cari nama atau kode produk..."
+          class="input pl-11 pr-20"
+          x-ref="searchInput"
+          aria-label="Cari produk">
+        <span class="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 sm:inline-block">
+          Enter
+        </span>
       </div>
 
-    </div>
+      <!-- PRODUCT GRID -->
+      <div class="min-w-0 rounded-xl bg-slate-50/70 p-2 sm:p-3">
+        <div class="grid max-h-[58vh] grid-cols-2 gap-2.5 overflow-y-auto pr-1 sm:grid-cols-3 sm:gap-3 lg:grid-cols-3 2xl:grid-cols-4">
+          <template x-for="p in produk" :key="p.kode_produk">
+            <button
+              type="button"
+              @click="tambah(p)"
+              :disabled="Number(p.stok) <= 0"
+              class="group min-w-0 rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-sm">
+              <div class="flex min-h-[116px] flex-col">
+                <div class="mb-2 flex items-start justify-between gap-2">
+                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                      <path d="M6 7h12l1 13H5L6 7Z" stroke-linejoin="round"></path>
+                      <path d="M9 7a3 3 0 0 1 6 0" stroke-linecap="round"></path>
+                    </svg>
+                  </span>
+                  <span
+                    class="max-w-[70%] truncate rounded-full px-2 py-1 text-[10px] font-semibold"
+                    :class="Number(p.stok) <= 0 ? 'bg-red-50 text-red-600' : Number(p.stok) <= 5 ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'"
+                    x-text="Number(p.stok) <= 0 ? 'Habis' : 'Stok ' + p.stok">
+                  </span>
+                </div>
 
-    <!-- ================= RIGHT: KERANJANG ================= -->
-    <div class="bg-white rounded-xl shadow border p-4 flex flex-col">
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-sm font-semibold text-slate-800 group-hover:text-primary" x-text="p.nama_produk"></div>
+                  <div class="mt-1 truncate text-[11px] text-slate-400" x-text="p.nama_kategori || p.kode_produk"></div>
+                </div>
 
-      <div class="flex-between mb-3">
-        <h2 class="font-bold">Keranjang</h2>
-        <button @click="reset()" class="text-red-500 text-sm">Reset</button>
-      </div>
-
-      <!-- LIST -->
-      <div class="flex-1 overflow-auto space-y-2">
-
-        <template x-for="(item, i) in keranjang" :key="item.kode_produk">
-          <div class="flex-between border p-2 rounded-lg">
-
-            <div>
-              <div class="font-medium text-sm" x-text="item.nama_produk"></div>
-              <div class="text-xs text-gray-400"
-                x-text="utils.formatRupiah(item.harga_satuan)">
+                <div class="mt-3 flex items-end justify-between gap-2">
+                  <span class="text-sm font-bold text-primary" x-text="utils.formatRupiah(p.harga_jual)"></span>
+                  <span class="text-[10px] font-semibold text-slate-400 group-hover:text-primary">Tambah</span>
+                </div>
               </div>
-            </div>
+            </button>
+          </template>
 
+          <template x-if="produk.length === 0">
+            <div class="col-span-full flex min-h-48 flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-4 text-center">
+              <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-4-4" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <p class="text-sm font-semibold text-slate-700">Produk tidak ditemukan</p>
+              <p class="mt-1 text-xs text-slate-400">Coba gunakan nama atau kode produk yang berbeda.</p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART -->
+    <section class="card min-w-0 p-4 sm:p-5 xl:sticky xl:top-5 xl:h-[calc(100dvh-7rem)] xl:max-h-[calc(100dvh-7rem)]" aria-labelledby="kasir-cart-title">
+      <div class="flex min-w-0 flex-col xl:h-full">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <div class="min-w-0">
             <div class="flex items-center gap-2">
-
-              <input type="number"
-                min="1"
-                class="input w-16"
-                x-model.number="item.jumlah"
-                @input="update(i)">
-
-              <div class="text-sm font-semibold"
-                x-text="utils.formatRupiah(item.subtotal)">
-              </div>
-
-              <button @click="hapus(i)" class="text-red-500 text-xs">✕</button>
-
+              <h2 id="kasir-cart-title" class="text-base font-bold text-slate-900">Keranjang</h2>
+              <span class="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary" x-text="keranjang.length"></span>
             </div>
-
+            <p class="mt-0.5 text-xs text-slate-500">Periksa jumlah dan total sebelum menyimpan.</p>
           </div>
-        </template>
+          <button type="button" @click="reset()" :disabled="keranjang.length === 0" class="shrink-0 text-xs font-semibold text-red-500 transition hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-40">
+            Kosongkan
+          </button>
+        </div>
 
-        <template x-if="keranjang.length === 0">
-          <div class="text-center text-gray-400 py-10">
-            Keranjang kosong
+        <!-- CART LIST -->
+        <div class="min-h-28 flex-1 overflow-y-auto rounded-xl bg-slate-50/70 p-2 sm:p-3 xl:min-h-0">
+          <div class="space-y-2">
+            <template x-for="(item, i) in keranjang" :key="item.kode_produk">
+              <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+                <div class="flex min-w-0 items-start gap-3">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold text-primary" x-text="i + 1"></div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-800" x-text="item.nama_produk"></p>
+                    <p class="mt-0.5 text-xs text-slate-400" x-text="utils.formatRupiah(item.harga_satuan) + ' / item'"></p>
+                  </div>
+                  <button type="button" @click="hapus(i)" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Hapus produk dari keranjang">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="mt-3 flex items-center justify-between gap-3">
+                  <div class="flex items-center rounded-lg border border-slate-200 bg-slate-50">
+                    <button type="button" @click="item.jumlah > 1 && (item.jumlah--, update(i))" class="h-9 w-9 text-slate-500 transition hover:bg-white hover:text-slate-800" aria-label="Kurangi jumlah">−</button>
+                    <input type="number" min="1" :max="item.stok" class="h-9 w-12 border-x border-slate-200 bg-white p-0 text-center text-sm font-semibold text-slate-800 outline-none" x-model.number="item.jumlah" @input="update(i)" aria-label="Jumlah produk">
+                    <button type="button" @click="item.jumlah < item.stok && (item.jumlah++, update(i))" class="h-9 w-9 text-slate-500 transition hover:bg-white hover:text-slate-800" aria-label="Tambah jumlah">+</button>
+                  </div>
+                  <span class="text-sm font-bold text-slate-900" x-text="utils.formatRupiah(item.subtotal)"></span>
+                </div>
+              </div>
+            </template>
+
+            <template x-if="keranjang.length === 0">
+              <div class="flex min-h-48 flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-5 text-center">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M6 7h12l1 13H5L6 7Z" stroke-linejoin="round"></path>
+                    <path d="M9 7a3 3 0 0 1 6 0" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <p class="text-sm font-semibold text-slate-700">Keranjang masih kosong</p>
+                <p class="mt-1 max-w-xs text-xs leading-5 text-slate-400">Pilih produk di sebelah kiri untuk mulai membuat transaksi.</p>
+              </div>
+            </template>
           </div>
-        </template>
+        </div>
 
+        <!-- CHECKOUT -->
+        <div class="mt-4 border-t border-slate-200 pt-4">
+          <div class="mb-3 rounded-xl bg-slate-900 p-4 text-white">
+            <div class="flex items-center justify-between gap-3 text-sm text-slate-300">
+              <span>Total item</span>
+              <span class="font-semibold text-white" x-text="keranjang.reduce((s, i) => s + Number(i.jumlah || 0), 0)"></span>
+            </div>
+            <div class="mt-2 flex items-end justify-between gap-3">
+              <span class="text-sm font-medium text-slate-300">Total pembayaran</span>
+              <span class="text-xl font-bold tracking-tight sm:text-2xl" x-text="utils.formatRupiah(total)"></span>
+            </div>
+          </div>
+
+          <!-- PAYMENT METHOD -->
+          <div class="mb-3">
+            <label class="label">Metode Pembayaran</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" @click="metode='tunai'" :class="metode === 'tunai' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+                  <circle cx="12" cy="12" r="2.5"></circle>
+                </svg>
+                Tunai
+              </button>
+              <button type="button" @click="metode='qris'" :class="metode === 'qris' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM16 13h4v4h-4zM13 18h3M18 20h2" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                QRIS
+              </button>
+            </div>
+          </div>
+
+          <div class="grid gap-2 sm:grid-cols-2">
+            <button type="button" @click="submit(false)" :disabled="keranjang.length === 0" class="btn-secondary order-2 sm:order-1 disabled:cursor-not-allowed disabled:opacity-50">
+              Simpan Saja
+            </button>
+            <button type="button" @click="submit(true)" :disabled="keranjang.length === 0" class="btn-primary order-1 sm:order-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M6 3h10l3 3v15H6z"></path>
+                <path d="M9 3v6h7V3M9 17h6" stroke-linejoin="round"></path>
+              </svg>
+              Simpan & Cetak
+            </button>
+          </div>
+        </div>
       </div>
-
-      <!-- TOTAL -->
-      <div class="border-t pt-3 space-y-2 mt-3">
-
-        <div class="flex-between text-lg font-bold">
-          <span>Total</span>
-          <span x-text="utils.formatRupiah(total)"></span>
-        </div>
-
-        <!-- METODE -->
-        <div class="flex gap-2">
-          <button
-            @click="metode='tunai'"
-            :class="metode==='tunai' ? 'bg-green-500 text-white' : 'border'"
-            class="flex-1 p-2 rounded-lg border">
-            Tunai
-          </button>
-
-          <button
-            @click="metode='qris'"
-            :class="metode==='qris' ? 'bg-green-500 text-white' : 'border'"
-            class="flex-1 p-2 rounded-lg border">
-            QRIS
-          </button>
-        </div>
-
-        <!-- BUTTON -->
-        <div class="space-y-2">
-          <button
-            @click="submit(true)"
-            class="btn-primary w-full">
-            Simpan & Cetak
-          </button>
-
-          <button
-            @click="submit(false)"
-            class="btn-secondary w-full">
-            Simpan Saja
-          </button>
-        </div>
-
-      </div>
-
-    </div>
-
+    </section>
   </div>
-
 </div>
 
 <script>

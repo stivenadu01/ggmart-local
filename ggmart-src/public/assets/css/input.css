@@ -1,128 +1,174 @@
 @import "tailwindcss";
 
-/* 🎨 THEME (GLOBAL DESIGN) */
+/* =========================================================
+   GG-MART DESIGN SYSTEM
+   Global tokens + reusable admin components.
+   NOTE: Admin shell layout/positioning is intentionally kept
+   compatible with the current responsive baseline.
+========================================================= */
+
 @theme {
+  /* Brand */
   --color-primary: #22c55e;
   --color-primary-dark: #16a34a;
   --color-primary-light: #4ade80;
 
+  /* Semantic admin colors */
+  --color-admin-bg: #f8fafc;
+  --color-admin-surface: #ffffff;
+  --color-admin-border: #e2e8f0;
+  --color-admin-text: #0f172a;
+  --color-admin-muted: #64748b;
+  --color-admin-danger: #dc2626;
+
+  /* Typography */
   --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 
+  /* Shared sizing */
   --radius-base: 0.5rem;
 }
 
-/* 🔧 BASE STYLE (CSS Standar) */
+/* =========================================================
+   BASE
+========================================================= */
+
+html {
+  text-size-adjust: 100%;
+}
+
 body {
-  @apply bg-white text-gray-800 font-inter;
+  @apply bg-white text-gray-800 font-inter antialiased;
 }
 
 h1 {
-  @apply text-2xl md:text-3xl font-bold;
+  @apply text-2xl font-bold md:text-3xl;
 }
 
 h2 {
-  @apply text-lg md:text-xl font-semibold;
+  @apply text-lg font-semibold md:text-xl;
 }
 
 h3 {
-  @apply text-base md:text-lg font-medium;
+  @apply text-base font-medium md:text-lg;
 }
 
 button,
 a {
-  @apply hover:cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed;
+  @apply cursor-pointer disabled:cursor-not-allowed disabled:opacity-40;
 }
 
 [x-cloak] {
   display: none !important;
 }
 
-/* 🧩 COMPONENT & UTILITY CLASSES (Tailwind v4 Style) */
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 @utility btn {
-  @apply px-4 py-2 rounded-md font-medium transition w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition;
 }
 
 @utility btn-rounded {
-  @apply w-auto text-sm rounded-full;
+  @apply w-auto rounded-full text-sm;
 }
 
 @utility btn-primary {
-  @apply px-4 py-2 rounded-md font-medium transition bg-primary text-white hover:bg-primary-dark w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark;
 }
 
 @utility btn-secondary {
-  @apply px-4 py-2 rounded-md font-medium transition bg-gray-200 hover:bg-gray-300 w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200;
 }
 
 @utility btn-danger {
-  @apply px-4 py-2 rounded-md font-medium transition bg-red-500 text-white hover:bg-red-600 w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700;
 }
 
 @utility btn-outline {
-  @apply px-4 py-2 rounded-md font-medium transition border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white w-full;
-}
-
-@utility btn-link {
-  @apply text-gray-800 hover:text-primary underline;
-}
-
-@utility btn-link-primary {
-  @apply text-primary hover:text-primary-dark underline;
-}
-
-@utility btn-link-danger {
-  @apply text-red-500 hover:text-red-700 underline;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-900 hover:text-white;
 }
 
 @utility btn-outline-primary {
-  @apply px-4 py-2 rounded-md font-medium transition border border-primary text-primary hover:bg-primary hover:text-white w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary bg-white px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-white;
 }
 
 @utility btn-outline-danger {
-  @apply px-4 py-2 rounded-md font-medium transition border border-red-500 text-red-500 hover:bg-red-500 hover:text-white w-full;
+  @apply inline-flex w-full items-center justify-center gap-2 rounded-xl border border-red-300 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-600 hover:text-white;
 }
 
+@utility btn-link {
+  @apply text-slate-700 underline decoration-slate-300 underline-offset-2 transition hover:text-primary;
+}
+
+@utility btn-link-primary {
+  @apply text-primary underline decoration-primary/30 underline-offset-2 transition hover:text-primary-dark;
+}
+
+@utility btn-link-danger {
+  @apply text-red-600 underline decoration-red-200 underline-offset-2 transition hover:text-red-700;
+}
+
+/* =========================================================
+   FORM SYSTEM
+========================================================= */
+
 @utility input {
-  @apply w-full px-3 py-2 border rounded-md outline-none
-         focus:ring-2 focus:ring-[--color-primary-light] transition disabled:bg-gray-100 disabled:text-gray-500;
+  @apply w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400;
+  @apply focus:border-primary focus:ring-4 focus:ring-primary/10;
+  @apply disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500;
 }
 
 @utility form-group {
-  @apply space-y-1;
+  @apply space-y-1.5;
 }
 
 @utility label {
-  @apply block text-sm font-medium text-slate-700;
+  @apply mb-1.5 block text-sm font-semibold text-slate-700;
 }
 
 @utility input-error {
-  @apply border-red-500 focus:ring-red-300;
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500/10;
 }
+
+/* Keep native selects/textarea visually aligned with .input. */
+.admin-content select,
+.admin-content textarea {
+  @apply rounded-xl border border-slate-300 bg-white text-sm text-slate-900 outline-none transition;
+}
+
+.admin-content select:focus,
+.admin-content textarea:focus {
+  @apply border-primary ring-4 ring-primary/10;
+}
+
+/* =========================================================
+   CARDS & TABLES
+========================================================= */
 
 @utility card {
-  @apply bg-white rounded-xl shadow shadow-white p-4;
+  @apply rounded-2xl border border-slate-200 bg-white p-4 shadow-sm;
 }
 
+/* Legacy utility retained for existing pages. */
 @utility table {
   @apply w-full text-sm;
 }
 
-/* Untuk sub-elemen, gunakan sintaks CSS standar / nesting */
 .table {
-  @apply w-full text-sm bg-white rounded-3xl shadow-sm overflow-hidden;
+  @apply w-full overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm shadow-sm;
   border-collapse: separate;
   border-spacing: 0;
 
   th {
-    @apply text-left bg-slate-50 text-slate-600 font-semibold px-4 py-3;
+    @apply bg-slate-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500;
     border-bottom: 1px solid rgba(148, 163, 184, 0.25);
   }
 
   td {
-    @apply px-2 py-3 text-slate-700 bg-white;
+    @apply bg-white px-3 py-3 text-slate-700 sm:px-4;
     border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   }
 
@@ -130,20 +176,31 @@ a {
     border-bottom: 0;
   }
 
+  tbody tr {
+    transition: background-color 150ms ease;
+  }
+
   tbody tr:hover td {
     @apply bg-slate-50;
   }
 }
 
+/* =========================================================
+   MODAL
+   z-[100]/z-[101] matches the modal behavior fixed in v2.
+========================================================= */
+
 @utility modal-backdrop {
-  @apply fixed inset-0 bg-black/50 flex items-center justify-center h-full z-50;
+  @apply fixed inset-0 z-[100] flex h-full items-center justify-center bg-slate-950/45 p-4 backdrop-blur-[1px];
 }
 
 @utility modal-box {
-  @apply bg-white rounded-lg p-6 shadow-lg w-full max-w-md;
+  @apply relative z-[101] w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl;
 }
 
-/* 🔧 LAYOUT UTILITIES */
+/* =========================================================
+   LAYOUT UTILITIES
+========================================================= */
 
 @utility flex-center {
   @apply flex items-center justify-center;
@@ -162,34 +219,34 @@ a {
 }
 
 @utility section-center {
-  @apply min-h-[80dvh] flex items-center justify-center;
+  @apply flex min-h-[80dvh] items-center justify-center;
 }
-
-/* 🎨 EFFECT */
 
 @utility glass {
   @apply bg-white/70 backdrop-blur-md;
 }
 
-/* 🔗 LINK */
+/* =========================================================
+   LINKS & ICONS
+========================================================= */
 
 @utility link {
-  @apply hover:text-primary transition;
+  @apply transition hover:text-primary;
 }
 
 @utility link-lg {
-  @apply text-2xl font-bold tracking-tight hover:text-primary;
+  @apply text-2xl font-bold tracking-tight transition hover:text-primary;
 }
 
 @utility icon-btn {
-  @apply w-6 h-6 flex items-center justify-center;
+  @apply flex h-9 w-9 items-center justify-center rounded-lg transition;
 }
 
 @utility icon-left {
-  @apply w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2;
+  @apply absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2;
 }
 
-/* Menggunakan CSS Variabel dari Theme v4 */
+/* Explicit color utilities retained for existing templates. */
 @utility text-primary {
   color: var(--color-primary);
 }
@@ -201,85 +258,237 @@ a {
 @utility border-primary {
   border-color: var(--color-primary);
 }
-/* =========================
-   🧩 DROPDOWN & FILTER UI
-========================= */
+
+/* =========================================================
+   DROPDOWN & FILTERS
+========================================================= */
 
 @utility dropdown {
   @apply relative inline-block;
 }
 
 @utility dropdown-menu {
-  @apply absolute left-0 mt-2 w-auto max-h-[70dvh] overflow-y-auto
-         bg-white/90 backdrop-blur-md
-         border border-gray-200 rounded-xl shadow-xl
-         z-49;
+  @apply absolute left-0 z-[60] mt-2 max-h-[70dvh] w-auto overflow-y-auto rounded-xl border border-slate-200 bg-white/95 shadow-xl backdrop-blur-md;
 }
 
 @utility dropdown-item {
-  @apply px-3 py-2 text-sm hover:bg-gray-100 hover:text-gray-800 cursor-pointer whitespace-nowrap;
+  @apply cursor-pointer whitespace-nowrap px-3 py-2 text-sm transition hover:bg-slate-100 hover:text-slate-900;
 }
 
 @utility dropdown-item-active {
   @apply bg-primary text-white;
 }
 
-/* FILTER BUTTON */
 @utility btn-filter {
-  @apply inline-flex items-center gap-2 px-3 py-2
-         border border-gray-300 rounded-md text-sm
-         hover:bg-gray-100
-         cursor-pointer
-         w-auto whitespace-nowrap transition;
+  @apply inline-flex w-auto items-center gap-2 whitespace-nowrap rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50;
 }
 
 @utility btn-filter-active {
-  @apply border-primary text-primary;
+  @apply border-primary bg-primary/5 text-primary;
 }
 
-/* Scrollbar hidden by default, show on hover (atau saat interaksi) */
+/* =========================================================
+   SCROLLBARS
+   Do not hide scrollbars globally. This keeps touch and
+   desktop overflow discoverable without changing shell layout.
+========================================================= */
+
 .overflow-x-auto,
 .overflow-y-auto {
-  /* Firefox */
-  scrollbar-width: none; /* hide */
-  scrollbar-color: transparent transparent;
-  /* IE10+ */
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.45) transparent;
+  -ms-overflow-style: auto;
 }
 
-/* Hide webkit scrollbars by default */
 .overflow-x-auto::-webkit-scrollbar,
 .overflow-y-auto::-webkit-scrollbar {
-  height: 0;
-  width: 0;
+  height: 6px;
+  width: 6px;
 }
 
-/* Show scrollbar when hovering the container */
-.overflow-x-auto:hover::-webkit-scrollbar,
-.overflow-y-auto:hover::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-
-.overflow-x-auto:hover::-webkit-scrollbar-track,
-.overflow-y-auto:hover::-webkit-scrollbar-track {
+.overflow-x-auto::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.overflow-x-auto:hover::-webkit-scrollbar-thumb,
-.overflow-y-auto:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
+.overflow-x-auto::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
   border-radius: 9999px;
 }
 
-.overflow-x-auto:hover::-webkit-scrollbar-thumb:hover,
-.overflow-y-auto:hover::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
+.overflow-x-auto::-webkit-scrollbar-thumb:hover,
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.55);
 }
 
-/* Firefox: show thin scrollbar on hover */
-.overflow-x-auto:hover,
-.overflow-y-auto:hover {
+/* =========================================================
+   ADMIN SYSTEM — RESPONSIVE SHELL & DESIGN SYSTEM
+   Layout values are intentionally preserved from baseline v2.
+========================================================= */
+
+.admin-body {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+.admin-main {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.admin-content {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-sidebar {
+  overscroll-behavior: contain;
+}
+
+.admin-nav {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.admin-nav-heading {
+  @apply mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400;
+}
+
+.admin-nav-link {
+  @apply flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition;
+}
+
+.admin-nav-link:hover {
+  @apply bg-slate-50 text-slate-900;
+}
+
+.admin-nav-link.is-active {
+  @apply bg-emerald-50 font-semibold text-emerald-700;
+}
+
+.admin-nav-link.is-active .admin-nav-icon {
+  @apply bg-emerald-100 text-emerald-700;
+}
+
+.admin-nav-danger {
+  @apply text-red-600;
+}
+
+.admin-nav-danger:hover {
+  @apply bg-red-50 text-red-700;
+}
+
+.admin-nav-icon {
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm text-slate-500;
+}
+
+.admin-badge {
+  @apply absolute right-2 top-2 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-center text-[10px] font-bold leading-4 text-white;
+}
+
+.admin-page {
+  min-width: 0;
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+.admin-page-header {
+  @apply flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between;
+}
+
+.admin-eyebrow {
+  @apply mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600;
+}
+
+.admin-page-title {
+  @apply text-xl font-bold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl;
+}
+
+.admin-page-subtitle {
+  @apply mt-1 max-w-3xl text-sm leading-6 text-slate-500;
+}
+
+.admin-card {
+  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+}
+
+.admin-setting-item {
+  @apply flex min-w-0 flex-col gap-1 rounded-xl bg-slate-50 px-4 py-3;
+}
+
+.admin-setting-label {
+  @apply text-xs font-medium text-slate-400;
+}
+
+.admin-setting-value {
+  @apply min-w-0 text-sm font-semibold text-slate-800;
+}
+
+/* Keep existing pages from creating viewport-level overflow. */
+.admin-content > * {
+  min-width: 0;
+}
+
+.admin-content table {
+  max-width: 100%;
+}
+
+.admin-content img {
+  max-width: 100%;
+}
+
+/* Mobile: common admin controls remain touch-friendly. */
+@media (max-width: 639px) {
+  .admin-content .input,
+  .admin-content select,
+  .admin-content textarea {
+    min-height: 42px;
+  }
+
+  .admin-content .btn-primary,
+  .admin-content .btn-secondary,
+  .admin-content .btn-danger,
+  .admin-content .btn-outline,
+  .admin-content .btn-outline-primary,
+  .admin-content .btn-outline-danger {
+    min-height: 42px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-shell {
+    grid-template-columns: 18rem minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .admin-shell {
+    grid-template-columns: 19rem minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  .admin-content .min-w-64,
+  .admin-content .min-w-72 {
+    min-width: 0 !important;
+  }
+
+  .admin-content .w-72 {
+    width: 100% !important;
+  }
+
+  .admin-content .max-h-\[80dvh\] {
+    max-height: 65dvh;
+  }
+
+  .admin-content .max-h-\[85dvh\] {
+    max-height: 70dvh;
+  }
 }

@@ -131,6 +131,39 @@ function getMutasiByProduk($kode)
   return $data;
 }
 
+function getMutasiByProdukForUpdate($kode)
+{
+  $conn = db();
+  $stmt = $conn->prepare("
+    SELECT * FROM mutasi_stok
+    WHERE kode_produk=? AND sisa_stok > 0 AND type='masuk'
+    ORDER BY tanggal ASC, id_mutasi ASC
+    FOR UPDATE
+  ");
+  $stmt->bind_param('s', $kode);
+  $stmt->execute();
+
+  $res = $stmt->get_result();
+  $data = [];
+  while ($row = $res->fetch_assoc()) {
+    $data[] = $row;
+  }
+
+  $stmt->close();
+  return $data;
+}
+
+function findMutasiStokForUpdate($id)
+{
+  $conn = db();
+  $stmt = $conn->prepare("SELECT * FROM mutasi_stok WHERE id_mutasi = ? FOR UPDATE");
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+  $res = $stmt->get_result()->fetch_assoc();
+  $stmt->close();
+  return $res;
+}
+
 function ubahSisaStokMutasi($id, $stok_baru)
 {
   $conn = db();

@@ -47,7 +47,7 @@ delete('/api/mutasi', 'ApiMutasiStokController@hapus', ["role:admin"]);
 get('/api/transaksi/list', 'ApiTransaksiController@list', ["auth"]);
 get('/api/transaksi/detail', 'ApiTransaksiController@detail', ["auth"]);
 
-post('/api/transaksi', 'ApiTransaksiController@tambah_transaksi', ["role:admin,pimpinan"]); // admin
+post('/api/transaksi', 'ApiTransaksiController@tambah_transaksi', ["role:admin"]); // kasir admin only
 post('/api/transaksi/user', 'ApiTransaksiController@tambah_transaksi_user', ["auth"]); // pesanan user
 
 post('/api/transaksi/proses', 'ApiTransaksiController@proses_transaksi', ["role:admin"]); // proses

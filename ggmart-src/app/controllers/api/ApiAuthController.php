@@ -36,6 +36,9 @@ class ApiAuthController
         throw new Exception("Akun belum diverifikasi", 403);
       }
 
+      // Regenerasi session setelah autentikasi untuk mencegah session fixation.
+      session_regenerate_id(true);
+
       // hapus token dan verified dari data session
       unset($user['verify_token'], $user['token_expired'], $user['is_verified'], $user['password'], $user['reset_token'], $user['reset_expired']);
       // simpan session

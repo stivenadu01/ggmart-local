@@ -125,6 +125,17 @@ function findTransaksi($kode_transaksi)
   return $res;
 }
 
+function findTransaksiForUpdate($kode_transaksi)
+{
+  $conn = db();
+  $stmt = $conn->prepare("SELECT t.*, u.nama AS user FROM transaksi t LEFT JOIN user u ON t.id_user=u.id_user WHERE t.kode_transaksi = ? FOR UPDATE");
+  $stmt->bind_param("s", $kode_transaksi);
+  $stmt->execute();
+  $res = $stmt->get_result()->fetch_assoc();
+  $stmt->close();
+  return $res;
+}
+
 function tambahTransaksi($data)
 {
   $conn = db();

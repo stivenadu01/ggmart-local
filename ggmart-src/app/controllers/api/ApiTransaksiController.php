@@ -24,6 +24,13 @@ class ApiTransaksiController
       $metode = $_GET['metode'] ?? null;
       $user   = $_GET['user'] ?? null;
       $status = $_GET['status'] ?? null;
+      $currentUser = $_SESSION['user'] ?? null;
+
+      if (!$currentUser) throw new Exception('Unauthorized', 401);
+      if (!in_array($currentUser['role'], ['admin', 'pimpinan'], true)) {
+        // User biasa selalu dibatasi ke transaksi miliknya sendiri.
+        $user = (int)$currentUser['id_user'];
+      }
 
       [$data, $total, $summary] = getTransaksiList(
         $page,
@@ -66,6 +73,12 @@ class ApiTransaksiController
       $data = findTransaksi($kode);
       if (!$data) throw new Exception("Transaksi tidak ditemukan", 404);
 
+      $currentUser = $_SESSION['user'] ?? null;
+      if (!$currentUser) throw new Exception('Unauthorized', 401);
+      if ($currentUser['role'] === 'user' && (int)$data['id_user'] !== (int)$currentUser['id_user']) {
+        throw new Exception('Anda tidak memiliki akses ke transaksi ini', 403);
+      }
+
       $data['detail'] = getDetailTransaksi($kode);
 
       return response([
@@ -89,6 +102,17 @@ class ApiTransaksiController
     try {
       $input = input();
       $input['id_user'] = $_SESSION['user']['id_user'];
+      $input['metode_bayar'] = $input['metode_bayar'] ?? 'tunai';
+      if (!in_array($input['metode_bayar'], ['qris', 'tunai'], true)) {
+        throw new Exception('Metode pembayaran tidak valid', 422);
+      }
+      if (!isset($input['detail']) || !is_array($input['detail']) || count($input['detail']) === 0) {
+        throw new Exception('Detail transaksi wajib diisi', 422);
+      }
+      if (!isset($input['total_harga']) || !is_numeric($input['total_harga'])) {
+        throw new Exception('Total harga tidak valid', 422);
+      }
+
       $kode_transaksi = "GG-" . substr(str_replace('.', '', microtime(true)), -8) . random_int(100, 999);
       $input['kode_transaksi'] = $kode_transaksi;
 
@@ -96,18 +120,29 @@ class ApiTransaksiController
       $total_pokok = 0;
       $total_harga_db = 0;
 
+      $seenProducts = [];
       foreach ($input['detail'] as $item) {
 
-        $produk = findProduk($item['kode_produk']);
+        $kodeProduk = trim((string)($item['kode_produk'] ?? ''));
+        $jumlah = filter_var($item['jumlah'] ?? null, FILTER_VALIDATE_INT);
+        if ($kodeProduk === '' || $jumlah === false || $jumlah <= 0) {
+          throw new Exception('Produk dan jumlah transaksi tidak valid', 422);
+        }
+        if (isset($seenProducts[$kodeProduk])) {
+          throw new Exception('Produk yang sama tidak boleh muncul lebih dari satu kali dalam transaksi', 422);
+        }
+        $seenProducts[$kodeProduk] = true;
+
+        $produk = findProduk($kodeProduk);
         if (!$produk) throw new Exception("Produk tidak ditemukan", 404);
 
-        $db_harga = $produk['harga_jual'];
-        $total_harga_db += $db_harga * $item['jumlah'];
+        $db_harga = (float)$produk['harga_jual'];
+        $total_harga_db += $db_harga * $jumlah;
 
-        $stok = getMutasiByProduk($item['kode_produk']);
+        $stok = getMutasiByProdukForUpdate($kodeProduk);
         if (!$stok) throw new Exception("Stok " . $produk['nama_produk'] . " tidak tersedia", 422);
 
-        $ambil = intval($item['jumlah']);
+        $ambil = $jumlah;
         $subtotal_pokok = 0;
 
         foreach ($stok as $s) {
@@ -133,21 +168,22 @@ class ApiTransaksiController
         //detail transaksi 
         $detail_insert[] = [
           'kode_transaksi' => $kode_transaksi,
-          'kode_produk' => $item['kode_produk'],
-          'jumlah' => $item['jumlah'],
-          'harga_satuan' => $item['harga_satuan'],
-          'harga_pokok' => $subtotal_pokok / $item['jumlah']
+          'kode_produk' => $kodeProduk,
+          'jumlah' => $jumlah,
+          'harga_satuan' => $db_harga,
+          'harga_pokok' => $subtotal_pokok / $jumlah
         ];
 
-        updateStokProduk($item['kode_produk']);
-        ubahTerjualProduk($item['kode_produk'], $item['jumlah']);
+        updateStokProduk($kodeProduk);
+        ubahTerjualProduk($kodeProduk, $jumlah);
       }
 
-      if ($total_harga_db != $input['total_harga']) {
+      if (abs(round($total_harga_db, 2) - round((float)$input['total_harga'], 2)) > 0.01) {
         throw new Exception("Total harga tidak valid", 400);
       }
 
-      $input['total_pokok'] = $total_pokok;
+      $input['total_harga'] = round($total_harga_db, 2);
+      $input['total_pokok'] = round($total_pokok, 2);
       $input['status'] = 'selesai';
 
       tambahTransaksi($input);
@@ -180,8 +216,16 @@ class ApiTransaksiController
 
     try {
       $input = input();
-      if ($input['id_user'] != $_SESSION['user']['id_user']) {
-        throw new Exception("User Tidak Valid", 400);
+      $input['id_user'] = (int)$_SESSION['user']['id_user'];
+      $input['metode_bayar'] = $input['metode_bayar'] ?? 'tunai';
+      if (!in_array($input['metode_bayar'], ['qris', 'tunai'], true)) {
+        throw new Exception('Metode pembayaran tidak valid', 422);
+      }
+      if (!isset($input['detail']) || !is_array($input['detail']) || count($input['detail']) === 0) {
+        throw new Exception('Detail pesanan wajib diisi', 422);
+      }
+      if (!isset($input['total_harga']) || !is_numeric($input['total_harga'])) {
+        throw new Exception('Total harga tidak valid', 422);
       }
 
       $kode_transaksi = "GG-" . substr(str_replace('.', '', microtime(true)), -8) . random_int(100, 999);
@@ -190,31 +234,41 @@ class ApiTransaksiController
       $total_harga_db = 0;
       $detail_insert = [];
 
+      $seenProducts = [];
       foreach ($input['detail'] as $item) {
+        $kodeProduk = trim((string)($item['kode_produk'] ?? ''));
+        $jumlah = filter_var($item['jumlah'] ?? null, FILTER_VALIDATE_INT);
+        if ($kodeProduk === '' || $jumlah === false || $jumlah <= 0) {
+          throw new Exception('Produk dan jumlah pesanan tidak valid', 422);
+        }
+        if (isset($seenProducts[$kodeProduk])) {
+          throw new Exception('Produk yang sama tidak boleh muncul lebih dari satu kali dalam pesanan', 422);
+        }
+        $seenProducts[$kodeProduk] = true;
 
-        $produk = findProduk($item['kode_produk']);
+        $produk = findProduk($kodeProduk);
         if (!$produk) throw new Exception("Produk tidak ditemukan", 404);
-        if ($produk['stok'] < $item['jumlah']) {
+        if ((int)$produk['stok'] < $jumlah) {
           throw new Exception("Stok tidak cukup untuk {$produk['nama_produk']}", 422);
         }
 
-        $db_harga = $produk['harga_jual'];
-        $total_harga_db += $db_harga * $item['jumlah'];
-
+        $db_harga = (float)$produk['harga_jual'];
+        $total_harga_db += $db_harga * $jumlah;
 
         $detail_insert[] = [
           'kode_transaksi' => $kode_transaksi,
-          'kode_produk' => $item['kode_produk'],
-          'jumlah' => $item['jumlah'],
-          'harga_satuan' => $item['harga_satuan'],
-          'harga_pokok' => 0 // belum dihitung
+          'kode_produk' => $kodeProduk,
+          'jumlah' => $jumlah,
+          'harga_satuan' => $db_harga,
+          'harga_pokok' => 0
         ];
       }
 
-      if ($total_harga_db != $input['total_harga']) {
+      if (abs(round($total_harga_db, 2) - round((float)$input['total_harga'], 2)) > 0.01) {
         throw new Exception("Total harga tidak valid", 400);
       }
 
+      $input['total_harga'] = round($total_harga_db, 2);
       $input['total_pokok'] = 0;
       $input['status'] = 'pending';
 
@@ -243,9 +297,12 @@ class ApiTransaksiController
   // PROSES TRANSAKSI USER
   public function proses_transaksi()
   {
+    $conn = db();
+    $conn->begin_transaction();
     try {
       $kode_transaksi = request('kode_transaksi');
-      $trx = findTransaksi($kode_transaksi);
+      if (!$kode_transaksi) throw new Exception('Kode transaksi wajib diisi', 400);
+      $trx = findTransaksiForUpdate($kode_transaksi);
       if (!$trx) throw new Exception("Transaksi tidak ditemukan", 404);
 
       if ($trx['status'] !== 'pending') {
@@ -254,12 +311,14 @@ class ApiTransaksiController
 
       // update transaksi
       updateStatusTransaksi($kode_transaksi, 'diproses');
+      $conn->commit();
 
       return response([
         'success' => true,
         'message' => 'Transaksi berhasil diproses'
       ]);
     } catch (Exception $e) {
+      $conn->rollback();
       return response([
         'success' => false,
         'message' => $e->getMessage()
@@ -275,7 +334,7 @@ class ApiTransaksiController
 
     try {
       $kode_transaksi = request('kode_transaksi');
-      $trx = findTransaksi($kode_transaksi);
+      $trx = findTransaksiForUpdate($kode_transaksi);
       if (!$trx) throw new Exception("Transaksi tidak ditemukan", 404);
 
       if ($trx['status'] !== 'diproses') {
@@ -288,7 +347,7 @@ class ApiTransaksiController
 
       foreach ($details as $item) {
 
-        $stok = getMutasiByProduk($item['kode_produk']);
+        $stok = getMutasiByProdukForUpdate($item['kode_produk']);
         if (!$stok) throw new Exception("Stok tidak tersedia", 422);
 
         $ambil = $item['jumlah'];
@@ -349,7 +408,7 @@ class ApiTransaksiController
       $kode = input()['kode_transaksi'] ?? null;
       if (!$kode) throw new Exception("Kode transaksi wajib", 400);
 
-      $transaksi = findTransaksi($kode);
+      $transaksi = findTransaksiForUpdate($kode);
       if (!$transaksi) throw new Exception("Transaksi tidak ditemukan", 404);
 
       // hanya boleh batalkan yang belum dibatalkan
@@ -413,10 +472,13 @@ class ApiTransaksiController
       $kode = input()['kode_transaksi'] ?? null;
       if (!$kode) throw new Exception("Kode transaksi wajib", 400);
 
-      $transaksi = findTransaksi($kode);
+      $transaksi = findTransaksiForUpdate($kode);
       if (!$transaksi) throw new Exception("Transaksi tidak ditemukan", 404);
+      if ((int)$transaksi['id_user'] !== (int)$_SESSION['user']['id_user']) {
+        throw new Exception('Anda tidak memiliki akses ke pesanan ini', 403);
+      }
 
-      if ($transaksi['status'] !== 'pendig') {
+      if ($transaksi['status'] !== 'pending') {
         throw new Exception("Hanya transaksi pending yang bisa dibatalkan", 400);
       }
 

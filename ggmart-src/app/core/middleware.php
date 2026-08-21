@@ -16,8 +16,8 @@ function run_middleware($middlewares = [])
 
     // ROLE MIDDLEWARE
     if (str_starts_with($mw, 'role:')) {
-      $roles = explode(':', $mw)[1]  ?? '';
-      $allowedRoles = explode(',', $roles);
+      $roles = substr($mw, 5);
+      $allowedRoles = array_values(array_filter(array_map('trim', explode(',', $roles))));
       $user = $_SESSION['user'] ?? null;
 
 

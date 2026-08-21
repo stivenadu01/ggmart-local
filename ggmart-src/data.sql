@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `no_hp` varchar(15) DEFAULT NULL,
   `alamat` varchar(255) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('admin','user') DEFAULT 'user',
+  `role` enum('admin','user','pimpinan') DEFAULT 'user',
   `tanggal_dibuat` datetime DEFAULT CURRENT_TIMESTAMP,
   `is_verified` tinyint(1) DEFAULT '0',
   `verify_token` varchar(255) DEFAULT NULL,

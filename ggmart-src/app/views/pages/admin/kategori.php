@@ -92,8 +92,14 @@
 
   <!-- MODAL -->
   <template x-if="showModal">
-    <div class="fixed inset-0 bg-black/50 flex-center z-50" @click.self="closeModal()">
-      <div class="bg-white rounded-2xl p-6 w-full max-w-xl shadow-lg" @click.stop>
+    <div
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-[1px]"
+      @click.self="closeModal()"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="relative z-[101] w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl"
+        @click.stop>
         <h2 class="mb-4" x-text="editingId ? 'Edit Kategori' : 'Tambah Kategori'"></h2>
 
         <form @submit.prevent="save" class="space-y-4">

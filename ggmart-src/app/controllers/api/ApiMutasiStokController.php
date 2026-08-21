@@ -80,27 +80,47 @@ class ApiMutasiStokController
       $type        = $input['type'] ?? null;
       $id_mutasi   = $input['id_mutasi'] ?? null;
 
-      if (!$kode_produk || !$type || !$jumlah) {
+      if (!$kode_produk || !$type) {
         throw new Exception('Produk dan Type wajib di isi.', 422);
       }
+      $jumlah = filter_var($jumlah, FILTER_VALIDATE_INT);
+      if ($jumlah === false || $jumlah <= 0) {
+        throw new Exception('Jumlah stok harus berupa bilangan bulat lebih dari 0.', 422);
+      }
+      if (!in_array($type, ['masuk', 'keluar'], true)) {
+        throw new Exception('Type mutasi stok tidak valid.', 422);
+      }
+      $produk = findProduk($kode_produk);
+      if (!$produk) throw new Exception('Produk tidak ditemukan.', 404);
 
       if ($type == 'masuk') {
-        if (empty($input['harga_pokok'])) {
-          throw new Exception('Harga pokok wajib di isi.', 422);
+        if (!isset($input['harga_pokok']) || !is_numeric($input['harga_pokok']) || (float)$input['harga_pokok'] < 0) {
+          throw new Exception('Harga pokok wajib diisi dengan nilai yang valid.', 422);
         }
-
+        $input['jumlah'] = $jumlah;
+        $input['harga_pokok'] = round((float)$input['harga_pokok'], 2);
         $input['sisa_stok'] = $jumlah;
 
         if (!tambahMutasiStok($input)) throw new Exception("Gagal Tambah", 500);
         if (!updateStokProduk($kode_produk)) throw new Exception("Gagal Update", 500);
       } elseif ($type == 'keluar') {
-        $mutasi = findMutasiStok($id_mutasi);
+        if (!$id_mutasi) {
+          throw new Exception('ID batch stok wajib diisi.', 422);
+        }
+        $mutasi = findMutasiStokForUpdate((int)$id_mutasi);
 
-        if (!$id_mutasi || !$mutasi) {
-          throw new Exception('Mutasi/Batch Stok Tidak Ditemukan!', 422);
+        if (!$mutasi || $mutasi['type'] !== 'masuk' || $mutasi['kode_produk'] !== $kode_produk) {
+          throw new Exception('Mutasi/Batch Stok tidak valid.', 422);
+        }
+        if ((int)$mutasi['sisa_stok'] < $jumlah) {
+          throw new Exception('Stok batch tidak mencukupi.', 422);
         }
 
-        if (!ubahSisaStokMutasi($id_mutasi, $mutasi['sisa_stok'] - $jumlah)) {
+        $input['jumlah'] = $jumlah;
+        $input['sisa_stok'] = null;
+        $input['harga_pokok'] = $mutasi['harga_pokok'];
+
+        if (!ubahSisaStokMutasi($id_mutasi, (int)$mutasi['sisa_stok'] - $jumlah)) {
           throw new Exception("Gagal Ubah Stok", 500);
         }
 

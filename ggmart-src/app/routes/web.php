@@ -19,7 +19,7 @@ get('/profil', 'UserController@profil', ['auth']);
 get('/admin', 'AdminController@dashboard', ['role:admin,pimpinan']);
 get('/admin/kasir', 'AdminController@kasir', ['role:admin']);
 get('/admin/pesanan', 'AdminController@pesanan', ['role:admin']);
-get('/admin/kategori', 'AdminController@kategori', ['role:admin:pimpinan']);
+get('/admin/kategori', 'AdminController@kategori', ['role:admin,pimpinan']);
 get('/admin/produk', 'AdminController@produk', ['role:admin,pimpinan']);
 get('/admin/produk/form', 'AdminController@produkForm', ['role:admin']);
 get('/admin/stok', 'AdminController@stok', ['role:admin,pimpinan']);

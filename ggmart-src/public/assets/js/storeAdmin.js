@@ -22,6 +22,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     start() {
+      if (this.interval) return
       this.fetch()
       // polling ringan (5 detik)
       this.interval = setInterval(() => {
@@ -33,7 +34,10 @@ document.addEventListener('alpine:init', () => {
     },
 
     stop() {
-      clearInterval(this.interval)
+      if (this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
     }
   })
 
