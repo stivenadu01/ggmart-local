@@ -35,7 +35,7 @@
 
   <footer class="mt-16 border-t border-slate-200 bg-white sm:mt-20">
     <div class="user-container py-10 sm:py-12">
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-10">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
 
         <div class="md:col-span-1">
           <div class="mb-3 flex items-center gap-2 font-poppins text-lg font-bold text-slate-900">
@@ -52,17 +52,6 @@
           <ul class="space-y-1">
             <li><a :href="BASE_URL" class="user-menu-item">Beranda</a></li>
             <li><a :href="BASE_URL + '/produk'" class="user-menu-item">Produk</a></li>
-            <li><a :href="BASE_URL + '/tentang'" class="user-menu-item">Tentang</a></li>
-            <li><a :href="BASE_URL + '/faq'" class="user-menu-item">FAQ</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="mb-3 text-sm font-bold text-slate-900">Mitra</h3>
-          <ul class="space-y-1">
-            <li><a href="#" class="user-menu-item">Gabung Mitra</a></li>
-            <li><a href="#" class="user-menu-item">Syarat &amp; Ketentuan</a></li>
-            <li><a href="#" class="user-menu-item">Kebijakan</a></li>
           </ul>
         </div>
 
@@ -71,7 +60,7 @@
           <ul class="space-y-1 text-sm text-slate-500">
             <li class="px-3 py-2.5">Email: ggmart@gmit.or.id</li>
             <li>
-              <a :href="`https://wa.me/${$store.utils.NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`" class="user-menu-item">
+              <a :href="`https://wa.me/${NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`" class="user-menu-item">
                 WhatsApp Admin
               </a>
             </li>
