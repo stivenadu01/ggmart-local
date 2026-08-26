@@ -1,182 +1,210 @@
-<div class="py-10" x-data="detailProdukPage()">
+<div class="user-section" x-data="detailProdukPage()">
 
-  <!-- BACK BUTTON -->
-  <div class="px-d mb-6">
-    <button @click="window.history.back()" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition">
-      <span class="text-2xl">‹</span>
-      <span>Kembali</span>
+  <div class="user-container">
+    <!-- BACK -->
+    <button
+      type="button"
+      @click="window.history.back()"
+      class="mb-6 inline-flex min-h-10 items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+      <span class="text-xl leading-none" aria-hidden="true">‹</span>
+      <span>Kembali ke katalog</span>
     </button>
-  </div>
 
-  <!-- CONTENT -->
-  <template x-if="produk">
-    <div class="px-2 md:px-8 lg:px-16 max-w-7xl mx-auto">
+    <!-- LOADING -->
+    <div x-show="loading" x-cloak class="grid gap-8 md:grid-cols-2" aria-label="Memuat detail produk" aria-live="polite">
+      <div class="aspect-square animate-pulse rounded-3xl bg-slate-100"></div>
+      <div class="space-y-4 py-4">
+        <div class="h-8 w-4/5 animate-pulse rounded bg-slate-100"></div>
+        <div class="h-4 w-full animate-pulse rounded bg-slate-100"></div>
+        <div class="h-4 w-5/6 animate-pulse rounded bg-slate-100"></div>
+        <div class="h-10 w-2/5 animate-pulse rounded bg-slate-100"></div>
+        <div class="h-16 w-full animate-pulse rounded-2xl bg-slate-100"></div>
+        <div class="h-11 w-full animate-pulse rounded-xl bg-slate-100"></div>
+      </div>
+    </div>
 
-      <!-- MAIN GRID -->
-      <div class="grid md:grid-cols-2 gap-8 mb-16">
+    <!-- ERROR / NOT FOUND -->
+    <div x-show="!loading && error" x-cloak class="user-empty mx-auto max-w-xl">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-xl text-red-600" aria-hidden="true">!</div>
+      <h1 class="mt-4 text-lg font-bold text-slate-900">Produk tidak dapat ditemukan</h1>
+      <p class="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500" x-text="errorMessage"></p>
+      <div class="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+        <button type="button" @click="retry()" class="user-action-primary">Coba Lagi</button>
+        <a :href="BASE_URL + '/produk'" class="user-action-outline">Kembali ke Produk</a>
+      </div>
+    </div>
 
-        <!-- LEFT: IMAGE -->
-        <div class="flex">
-          <div class="w-full max-w-lg rounded-3xl overflow-hidden bg-gray-50 flex items-start p-6 glass">
-            <img id="img_detail"
-              :src="produk.gambar ? BASE_URL + '/uploads/' + produk.gambar : '/assets/no-image.png'"
-              class="w-full h-auto object-contain"
-              alt="">
+    <!-- PRODUCT -->
+    <template x-if="produk && !error">
+      <div>
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:items-start lg:gap-12">
+
+          <!-- IMAGE -->
+          <div class="lg:sticky lg:top-24">
+            <div class="user-product-detail-media aspect-square sm:aspect-auto sm:min-h-[520px]">
+              <img
+                id="img_detail"
+                :src="produk.gambar ? BASE_URL + '/uploads/' + produk.gambar : BASE_URL + '/assets/no-image.png'"
+                :alt="produk.nama_produk"
+                class="max-h-[520px] w-full object-contain"
+                decoding="async">
+            </div>
+          </div>
+
+          <!-- INFORMATION -->
+          <div class="space-y-5">
+            <div>
+              <div class="mb-3 flex flex-wrap items-center gap-2">
+                <span
+                  x-show="produk.asal_produk"
+                  x-text="'📍 ' + produk.asal_produk"
+                  class="status-success">
+                </span>
+                <span
+                  x-show="produk.stok > 0"
+                  class="status-neutral">
+                  Stok tersedia
+                </span>
+                <span
+                  x-show="produk.stok <= 0"
+                  class="status-danger">
+                  Stok habis
+                </span>
+              </div>
+
+              <h1 class="text-3xl! font-bold tracking-tight text-slate-900 sm:text-4xl!" x-text="produk.nama_produk"></h1>
+
+              <div class="mt-4 text-2xl font-semibold text-primary sm:text-3xl" x-text="$store.utils.formatRupiah(produk.harga_jual)"></div>
+            </div>
+
+            <div class="user-product-info">
+              <h2 class="text-sm font-semibold text-slate-900">Tentang produk</h2>
+              <p
+                class="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600"
+                x-text="produk.deskripsi || 'Belum ada deskripsi produk.'">
+              </p>
+            </div>
+
+            <div class="user-product-info">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Jumlah</p>
+                  <p class="form-help">Maksimal sesuai stok yang tersedia.</p>
+                </div>
+
+                <div class="user-quantity-control" aria-label="Pilih jumlah produk">
+                  <button
+                    type="button"
+                    @click="qty = Math.max(1, qty - 1)"
+                    :disabled="qty <= 1 || produk.stok <= 0"
+                    class="user-quantity-button"
+                    aria-label="Kurangi jumlah">−</button>
+                  <span class="w-10 text-center text-sm font-semibold text-slate-900" x-text="qty"></span>
+                  <button
+                    type="button"
+                    @click="qty = Math.min(produk.stok, qty + 1)"
+                    :disabled="qty >= produk.stok || produk.stok <= 0"
+                    class="user-quantity-button"
+                    aria-label="Tambah jumlah">+</button>
+                </div>
+              </div>
+
+              <div class="mt-4 rounded-xl bg-slate-50 px-3 py-3 text-sm text-slate-600">
+                <div class="flex items-center justify-between gap-4">
+                  <span>Stok tersedia</span>
+                  <strong class="text-slate-900" x-text="produk.stok > 0 ? produk.stok : 'Habis'"></strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="user-product-detail-actions">
+              <a
+                :href="`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent('Halo, saya ingin bertanya tentang ' + produk.nama_produk)}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="user-action-outline min-h-11">
+                Hubungi Admin
+              </a>
+              <button
+                type="button"
+                @click="addToCart()"
+                :disabled="produk.stok <= 0 || adding"
+                class="user-action-primary min-h-11">
+                <span x-show="!adding && produk.stok > 0">+ Tambah ke Keranjang</span>
+                <span x-show="adding">Menambahkan...</span>
+                <span x-show="!adding && produk.stok <= 0">Stok Habis</span>
+              </button>
+            </div>
+
+            <div x-show="successMessage" x-cloak class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700" x-text="successMessage" role="status"></div>
           </div>
         </div>
 
-        <!-- RIGHT: DETAILS -->
-        <div class="flex flex-col justify-center space-y-6">
-
-          <!-- TITLE & DESCRIPTION -->
-          <div>
-            <h1 class="text-4xl! mb-3" x-text="produk.nama_produk"></h1>
-            <p class="text-gray-600 text-base leading-relaxed whitespace-pre-wrap" x-text="produk.deskripsi"></p>
+        <!-- RELATED -->
+        <div class="mt-14 border-t border-slate-200 pt-10 sm:mt-16 sm:pt-12">
+          <div class="user-section-header">
+            <h2 class="user-section-title">Produk Terkait</h2>
+            <p class="user-section-subtitle">Temukan produk lain yang mungkin sesuai dengan pilihanmu.</p>
           </div>
 
-          <!-- PRICE & ORIGIN -->
-          <div class="space-y-3">
-            <div class="text-4xl font-poppins font-semibold text-primary"
-              x-text="$store.utils.formatRupiah(produk.harga_jual)">
-            </div>
-            <template x-if="produk.asal_produk">
-              <div class="inline-block px-4 py-2 bg-green-100/50 rounded-full text-sm text-gray-700 font-medium border border-green-200"
-                x-text="'📍 ' + produk.asal_produk">
+          <div x-show="loadingRelated" x-cloak class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4" aria-label="Memuat produk terkait">
+            <template x-for="i in 4" :key="i">
+              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <div class="aspect-square animate-pulse bg-slate-100"></div>
+                <div class="space-y-2 p-3">
+                  <div class="h-4 w-4/5 animate-pulse rounded bg-slate-100"></div>
+                  <div class="h-4 w-2/5 animate-pulse rounded bg-slate-100"></div>
+                </div>
               </div>
             </template>
           </div>
 
-          <!-- STOCK STATUS -->
-          <div class="flex items-center gap-3 p-4 rounded-2xl glass border border-gray-200/50">
-            <div class="w-3 h-3 rounded-full"
-              :class="produk.stok > 0 ? 'bg-green-500' : 'bg-red-500'">
-            </div>
-            <span class="text-sm font-medium"
-              x-text="produk.stok > 0 ? `Stok Tersedia (${produk.stok})` : 'Stok Habis'">
-            </span>
+          <div x-show="!loadingRelated && produkTerkait.length === 0" x-cloak class="user-empty">
+            <p class="font-semibold text-slate-800">Belum ada produk terkait.</p>
+            <p class="form-help">Kamu bisa melihat produk lainnya melalui katalog.</p>
+            <a :href="BASE_URL + '/produk'" class="user-action-outline mt-4">Lihat Semua Produk</a>
           </div>
 
-          <!-- QUANTITY SELECTOR & ADD TO CART -->
-          <div class="space-y-4">
-            <div class="flex flex-wrap items-center gap-4">
-              <span class="text-sm font-medium text-gray-700">Jumlah:</span>
-              <div class="flex items-center gap-3 border border-gray-300 rounded-xl p-2 w-fit">
-                <button
-                  @click="qty = Math.max(1, qty - 1)"
-                  :disabled="qty <= 1"
-                  class="w-8 h-8 flex-center hover:bg-gray-100 rounded-lg transition disabled:opacity-50">
-                  −
-                </button>
-                <span class="w-8 text-center font-medium" x-text="qty"></span>
-                <button
-                  @click="qty = Math.min(produk.stok, qty + 1)"
-                  :disabled="qty >= produk.stok"
-                  class="w-8 h-8 flex-center hover:bg-gray-100 rounded-lg transition disabled:opacity-50">
-                  +
-                </button>
-              </div>
-            </div>
-            <div class="flex-center gap-3">
-              <a
-                :href="`https://wa.me/${NOMOR_WA}?text=Halo, saya ingin bertanya tentang ${produk.nama_produk}`"
-                target="_blank"
-                class="btn-outline-primary md:py-4 md:text-lg md:rounded-lg flex-center">
-                Hubungi Admin
-              </a>
-              <button
-                @click="addToCart()"
-                :disabled="produk.stok <= 0"
-                class="btn-primary md:py-4 md:text-lg md:rounded-lg">
-                <span class="flex-center" x-show="produk.stok > 0">
-                  <span class="hidden md:flex" x-text="'Tambah ke '"></span>
-                  <span class="md:hidden" x-text="'+ '"></span>
-                  Keranjang
-                </span>
-                <span x-show="produk.stok <= 0">Stok Habis</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DIVIDER -->
-      <div class="h-px bg-linear-to-r from-transparent via-gray-300 to-transparent my-16"></div>
-
-      <!-- RELATED PRODUCTS -->
-      <div>
-        <h2 class="text-3xl! mb-8">Produk Terkait</h2>
-
-        <!-- LOADING RELATED -->
-        <template x-if="loadingRelated">
-          <div class="flex-center h-40">
-            <div class="w-10 h-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-          </div>
-        </template>
-
-        <!-- EMPTY -->
-        <template x-if="!loadingRelated && produkTerkait.length === 0">
-          <div class="text-center py-10 text-gray-500">
-            Tidak ada produk terkait
-          </div>
-        </template>
-
-        <!-- GRID -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          <template x-for="item in produkTerkait" :key="item.kode_produk">
-            <div class="group min-h-48 md:min-h-64">
-              <div class="rounded-2xl overflow-hidden shadow hover:shadow-lg transition bg-white flex flex-col h-full">
-
-                <!-- IMAGE -->
-                <div class="bg-gray-50 flex items-center justify-center cursor-pointer aspect-square"
-                  @click="goDetail(item.kode_produk)">
+          <div x-show="!loadingRelated && produkTerkait.length > 0" class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+            <template x-for="item in produkTerkait" :key="item.kode_produk">
+              <article class="group user-card user-card-hover flex min-h-full flex-col overflow-hidden">
+                <button type="button" @click="goDetail(item.kode_produk)" class="aspect-square overflow-hidden bg-slate-50" :aria-label="'Lihat ' + item.nama_produk">
                   <img
                     loading="lazy"
                     decoding="async"
-                    :src="item.gambar ? BASE_URL + '/uploads' + item.gambar : '/assets/no-image.png'"
-                    class="w-full h-full object-contain group-hover:scale-105 transition">
-                </div>
+                    :src="item.gambar ? BASE_URL + '/uploads' + item.gambar : BASE_URL + '/assets/no-image.png'"
+                    :alt="item.nama_produk"
+                    class="h-full w-full object-contain transition duration-200 group-hover:scale-105">
+                </button>
 
-                <!-- CONTENT -->
-                <div class="p-3 space-y-1.5 flex-1">
-                  <div class="text-sm font-medium line-clamp-2"
-                    x-text="item.nama_produk"></div>
+                <div class="flex flex-1 flex-col p-3">
+                  <h3 class="line-clamp-2 text-sm font-medium text-slate-900" x-text="item.nama_produk"></h3>
+                  <p class="mt-1 font-poppins font-semibold text-primary" x-text="$store.utils.formatRupiah(item.harga_jual)"></p>
+                  <p x-show="item.asal_produk" x-text="item.asal_produk" class="mt-1 line-clamp-1 text-xs italic text-slate-500"></p>
 
-                  <div class="text-primary font-semibold font-poppins"
-                    x-text="$store.utils.formatRupiah(item.harga_jual)">
+                  <div class="mt-auto grid grid-cols-2 gap-2 pt-3">
+                    <button
+                      type="button"
+                      @click="quickAddToCart(item, $event)"
+                      :disabled="item.stok <= 0"
+                      class="user-action-primary min-h-9 px-2 py-2 text-xs disabled:cursor-not-allowed disabled:opacity-50">
+                      <span x-text="item.stok > 0 ? '+ Keranjang' : 'Habis'"></span>
+                    </button>
+                    <button
+                      type="button"
+                      @click="goDetail(item.kode_produk)"
+                      class="user-action-outline min-h-9 px-2 py-2 text-xs">
+                      Detail
+                    </button>
                   </div>
-
-                  <div
-                    x-show="item.asal_produk"
-                    x-text="item.asal_produk"
-                    class="text-xs text-gray-500 italic line-clamp-1">
-                  </div>
                 </div>
-
-                <!-- ACTION -->
-                <div class="flex gap-2 p-3">
-                  <button
-                    @click="quickAddToCart(item, $event)"
-                    class="btn-primary btn-rounded whitespace-nowrap text-xs px-3 py-1 flex-1">
-                    + Keranjang
-                  </button>
-
-                  <button
-                    @click="goDetail(item.kode_produk)"
-                    class="btn-outline btn-rounded text-xs px-3 py-1 flex-1">
-                    Detail
-                  </button>
-                </div>
-
-              </div>
-            </div>
-          </template>
+              </article>
+            </template>
+          </div>
         </div>
-
       </div>
-
-    </div>
-  </template>
-
+    </template>
+  </div>
 </div>
 
 <script>
@@ -184,8 +212,13 @@
     return {
       produk: null,
       produkTerkait: [],
+      loading: true,
+      error: false,
+      errorMessage: 'Silakan coba lagi atau kembali ke katalog produk.',
       loadingRelated: false,
+      adding: false,
       qty: 1,
+      successMessage: '',
 
       async init() {
         const kode = window.location.pathname.split('/').pop()
@@ -193,25 +226,35 @@
       },
 
       async loadDetail(kode) {
+        this.loading = true
+        this.error = false
+        this.successMessage = ''
+
         try {
-          const res = await API.get(`/produk/detail?k=${kode}`)
+          const res = await API.get(`/produk/detail?k=${encodeURIComponent(kode)}`)
           this.produk = res.data
+          this.qty = this.produk?.stok > 0 ? 1 : 0
 
-          // Reset quantity
-          this.qty = 1
-
-          // Load related products
           await this.loadRelated(kode)
         } catch (err) {
           console.error(err)
           this.produk = null
+          this.error = true
+          this.errorMessage = err?.message || 'Produk tidak ditemukan atau sedang tidak dapat dimuat.'
+        } finally {
+          this.loading = false
         }
+      },
+
+      async retry() {
+        const kode = window.location.pathname.split('/').pop()
+        await this.loadDetail(kode)
       },
 
       async loadRelated(kodeProduk) {
         this.loadingRelated = true
         try {
-          const res = await API.get(`/produk/terkait?k=${kodeProduk}`, false)
+          const res = await API.get(`/produk/terkait?k=${encodeURIComponent(kodeProduk)}`, false)
           this.produkTerkait = res.data || []
         } catch (err) {
           console.error(err)
@@ -222,20 +265,28 @@
       },
 
       async addToCart() {
-        if (!this.produk || this.produk.stok <= 0) return
-        const imgEL = document.getElementById('img_detail')
-        await Alpine.store('cart').add({
-          ...this.produk,
-          jumlah: this.qty,
-        }, imgEL)
+        if (!this.produk || this.produk.stok <= 0 || this.adding) return
 
-        // Reset quantity
-        this.qty = 1
+        this.adding = true
+        this.successMessage = ''
+        try {
+          const imgEl = document.getElementById('img_detail')
+          await Alpine.store('cart').add({
+            ...this.produk,
+            jumlah: this.qty,
+          }, imgEl)
+          this.successMessage = `${this.produk.nama_produk} ditambahkan ke keranjang.`
+          this.qty = 1
+          window.setTimeout(() => this.successMessage = '', 3000)
+        } finally {
+          this.adding = false
+        }
       },
 
       async quickAddToCart(item, e) {
-        const card = e.target.closest('.group')
-        const imgEl = card.querySelector('img')
+        if (item.stok <= 0) return
+        const card = e.currentTarget.closest('article')
+        const imgEl = card?.querySelector('img')
         await Alpine.store('cart').add({
           ...item,
           jumlah: 1
@@ -243,7 +294,7 @@
       },
 
       goDetail(kode) {
-        window.location.href = `${BASE_URL}/produk/${kode}`
+        window.location.href = `${BASE_URL}/produk/${encodeURIComponent(kode)}`
       }
     }
   }

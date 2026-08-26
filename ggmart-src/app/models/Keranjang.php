@@ -1,15 +1,15 @@
 <?php
 
-function getKeranjangByUser($id_user)
+function getKeranjangByUser($id_pengguna)
 {
   $conn = db();
   $stmt = $conn->prepare("
     SELECT k.*, p.nama_produk,p.gambar, p.harga_jual, p.stok
     FROM keranjang k
     LEFT JOIN produk p ON k.kode_produk = p.kode_produk
-    WHERE k.id_user = ?
+    WHERE k.id_pengguna = ?
   ");
-  $stmt->bind_param("i", $id_user);
+  $stmt->bind_param("i", $id_pengguna);
   $stmt->execute();
 
   $res = $stmt->get_result();
@@ -19,14 +19,14 @@ function getKeranjangByUser($id_user)
   return $data;
 }
 
-function tambahKeranjang($id_user, $kode_produk, $jumlah)
+function tambahKeranjang($id_pengguna, $kode_produk, $jumlah)
 {
   $conn = db();
   $stmt = $conn->prepare("
-    INSERT INTO keranjang (id_user, kode_produk, jumlah)
+    INSERT INTO keranjang (id_pengguna, kode_produk, jumlah)
     VALUES (?, ?, ?)
   ");
-  $stmt->bind_param("isi", $id_user, $kode_produk, $jumlah);
+  $stmt->bind_param("isi", $id_pengguna, $kode_produk, $jumlah);
   return $stmt->execute();
 }
 
@@ -53,19 +53,19 @@ function hapusItemKeranjang($id_keranjang)
   return $stmt->execute();
 }
 
-function clearKeranjang($id_user)
+function clearKeranjang($id_pengguna)
 {
   $conn = db();
-  $stmt = $conn->prepare("DELETE FROM keranjang WHERE id_user = ?");
-  $stmt->bind_param("i", $id_user);
+  $stmt = $conn->prepare("DELETE FROM keranjang WHERE id_pengguna = ?");
+  $stmt->bind_param("i", $id_pengguna);
   return $stmt->execute();
 }
 
-function cekKeranjang($id_user, $kode_produk)
+function cekKeranjang($id_pengguna, $kode_produk)
 {
   $conn = db();
-  $stmt = $conn->prepare('SELECT jumlah , id_keranjang FROM keranjang WHERE id_user=? AND kode_produk=?');
-  $stmt->bind_param('is', $id_user, $kode_produk);
+  $stmt = $conn->prepare('SELECT jumlah , id_keranjang FROM keranjang WHERE id_pengguna=? AND kode_produk=?');
+  $stmt->bind_param('is', $id_pengguna, $kode_produk);
   $stmt->execute();
   return $stmt->get_result()->fetch_assoc();
 }

@@ -29,7 +29,7 @@ class ApiTransaksiController
       if (!$currentUser) throw new Exception('Unauthorized', 401);
       if (!in_array($currentUser['role'], ['admin', 'pimpinan'], true)) {
         // User biasa selalu dibatasi ke transaksi miliknya sendiri.
-        $user = (int)$currentUser['id_user'];
+        $user = (int)$currentUser['id_pengguna'];
       }
 
       [$data, $total, $summary] = getTransaksiList(
@@ -75,7 +75,7 @@ class ApiTransaksiController
 
       $currentUser = $_SESSION['user'] ?? null;
       if (!$currentUser) throw new Exception('Unauthorized', 401);
-      if ($currentUser['role'] === 'user' && (int)$data['id_user'] !== (int)$currentUser['id_user']) {
+      if ($currentUser['role'] === 'pelanggan' && (int)$data['id_pengguna'] !== (int)$currentUser['id_pengguna']) {
         throw new Exception('Anda tidak memiliki akses ke transaksi ini', 403);
       }
 
@@ -101,7 +101,7 @@ class ApiTransaksiController
 
     try {
       $input = input();
-      $input['id_user'] = $_SESSION['user']['id_user'];
+      $input['id_pengguna'] = $_SESSION['user']['id_pengguna'];
       $input['metode_bayar'] = $input['metode_bayar'] ?? 'tunai';
       if (!in_array($input['metode_bayar'], ['qris', 'tunai'], true)) {
         throw new Exception('Metode pembayaran tidak valid', 422);
@@ -216,7 +216,7 @@ class ApiTransaksiController
 
     try {
       $input = input();
-      $input['id_user'] = (int)$_SESSION['user']['id_user'];
+      $input['id_pengguna'] = (int)$_SESSION['user']['id_pengguna'];
       $input['metode_bayar'] = $input['metode_bayar'] ?? 'tunai';
       if (!in_array($input['metode_bayar'], ['qris', 'tunai'], true)) {
         throw new Exception('Metode pembayaran tidak valid', 422);
@@ -417,6 +417,13 @@ class ApiTransaksiController
       }
       // jika selesai balikan stok
       if ($transaksi['status'] == 'selesai') {
+
+        // jika sudah lewat 24 jam tidak bisa dibatalkan
+        $waktu_transaksi = strtotime($transaksi['tanggal_transaksi']);
+        if (time() - $waktu_transaksi > 24 * 60 * 60) {
+          throw new Exception("Transaksi sudah lebih dari 24 jam, tidak bisa dibatalkan", 400);
+        }
+
         $detail = getDetailTransaksi($kode);
         foreach ($detail as $d) {
 
@@ -474,7 +481,7 @@ class ApiTransaksiController
 
       $transaksi = findTransaksiForUpdate($kode);
       if (!$transaksi) throw new Exception("Transaksi tidak ditemukan", 404);
-      if ((int)$transaksi['id_user'] !== (int)$_SESSION['user']['id_user']) {
+      if ((int)$transaksi['id_pengguna'] !== (int)$_SESSION['user']['id_pengguna']) {
         throw new Exception('Anda tidak memiliki akses ke pesanan ini', 403);
       }
 

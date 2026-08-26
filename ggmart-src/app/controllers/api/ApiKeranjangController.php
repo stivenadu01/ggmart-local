@@ -10,10 +10,10 @@ class ApiKeranjangController
 
   public function list()
   {
-    $id_user = query('u');
-    if ($id_user != $_SESSION['user']['id_user']) return response(['success' => 'false'], 400);
+    $id_pengguna = query('u');
+    if ($id_pengguna != $_SESSION['user']['id_pengguna']) return response(['success' => 'false'], 400);
 
-    $data = getKeranjangByUser($id_user);
+    $data = getKeranjangByUser($id_pengguna);
 
     return response([
       'success' => true,
@@ -24,21 +24,21 @@ class ApiKeranjangController
   public function tambah()
   {
     $input = input();
-    $id_user = $input['id_user'];
+    $id_pengguna = $input['id_pengguna'];
     $kode_produk = $input['kode_produk'];
     $jumlah = $input['jumlah'];
 
-    if ($id_user != $_SESSION['user']['id_user']) return response(['success' => 'false'], 400);
+    if ($id_pengguna != $_SESSION['user']['id_pengguna']) return response(['success' => 'false'], 400);
     model('Produk');
 
-    $cek = cekKeranjang($id_user, $kode_produk);
+    $cek = cekKeranjang($id_pengguna, $kode_produk);
     if ($cek) {
       $stok = cekStokProduk($kode_produk);
       if ($jumlah + $cek['jumlah'] > $stok) return response(['message' => "Stok tidak mencukupi"], 400);
       updateKeranjang($cek['id_keranjang'], $jumlah + $cek['jumlah']);
     } else {
       tambahKeranjang(
-        $id_user,
+        $id_pengguna,
         $kode_produk,
         intval($jumlah)
       );
@@ -50,7 +50,7 @@ class ApiKeranjangController
   public function update()
   {
     $input = input();
-    if ($input['id_user'] != $_SESSION['user']['id_user']) return response(['success' => 'false'], 400);
+    if ($input['id_pengguna'] != $_SESSION['user']['id_pengguna']) return response(['success' => 'false'], 400);
 
     updateKeranjang(
       $input['id_keranjang'],
@@ -63,9 +63,9 @@ class ApiKeranjangController
   public function hapus()
   {
     $id = input('id_keranjang');
-    $id_user = input('id_user');
+    $id_pengguna = input('id_pengguna');
 
-    if ($id_user !== $_SESSION['user']['id_user']) return response(['success' => false], 400);
+    if ($id_pengguna !== $_SESSION['user']['id_pengguna']) return response(['success' => false], 400);
 
     hapusItemKeranjang($id);
 
@@ -74,10 +74,10 @@ class ApiKeranjangController
 
   public function clear()
   {
-    $id_user = input('id_user');
-    if (input('id_user') != $_SESSION['user']['id_user']) return response(['success' => 'false'], 400);
+    $id_pengguna = input('id_pengguna');
+    if (input('id_pengguna') != $_SESSION['user']['id_pengguna']) return response(['success' => 'false'], 400);
 
-    clearKeranjang($id_user);
+    clearKeranjang($id_pengguna);
 
     return response(['success' => true]);
   }

@@ -1,29 +1,19 @@
-<div class="section-center bg-gray-100 px-4">
-  <div class="card max-w-md w-full text-center p-8">
+<div class="auth-page">
+  <div class="auth-simple-shell text-center">
+    <img :src="BASE_URL + '/assets/logo.png'" alt="Logo GG-Mart" class="auth-logo auth-logo-small mx-auto">
 
-    <!-- LOGO -->
-    <img :src="BASE_URL + '/assets/logo.png'" class="w-16 mx-auto mb-4">
-
-    <!-- TITLE -->
-    <h2 class="text-2xl font-bold mb-2">
-      <?= $status === 'success' ? 'Berhasil!' : 'Gagal' ?>
-    </h2>
-
-    <!-- MESSAGE -->
-    <p class="text-gray-600 mb-6">
-      <?= $message ?>
-    </p>
-
-    <!-- ACTION -->
     <?php if ($status === 'success'): ?>
-      <a :href="BASE_URL + '/login'" class="btn-primary block">
-        Login Sekarang
-      </a>
+      <div class="auth-state-icon auth-state-icon-success mx-auto mt-6">✓</div>
+      <p class="auth-eyebrow mt-5">VERIFIKASI BERHASIL</p>
+      <h1 class="auth-title">Akun Anda sudah aktif</h1>
+      <p class="auth-description">Email berhasil diverifikasi. Silakan masuk untuk mulai menggunakan GG-Mart.</p>
+      <a :href="BASE_URL + '/login'" class="btn-primary mt-6">Masuk Sekarang</a>
     <?php else: ?>
-      <a :href="BASE_URL+'/login'" class="btn-secondary block">
-        Kembali ke Login
-      </a>
+      <div class="auth-state-icon auth-state-icon-error mx-auto mt-6">!</div>
+      <p class="auth-eyebrow mt-5">VERIFIKASI GAGAL</p>
+      <h1 class="auth-title">Tautan tidak dapat digunakan</h1>
+      <p class="auth-description"><?= htmlspecialchars($message) ?></p>
+      <a :href="BASE_URL + '/login'" class="btn-secondary mt-6">Kembali ke Login</a>
     <?php endif; ?>
-
   </div>
 </div>

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title><?= $title ?? $_ENV['APP_NAME'] ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#22c55e">
   <link rel="shortcut icon" href="<?= BASE_URL ?>/assets/favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
 
@@ -22,80 +23,67 @@
   </script>
 </head>
 
-<body>
+<body class="min-w-0 bg-white text-slate-800">
 
   <?php include __DIR__ . '/../partials/navbar.php'; ?>
 
-  <main x-data :class="$store.ui.openSearch || $store.ui.openUserMenu ? 'blur-sm' : ''">
+  <main x-data :class="$store.ui.openSearch || $store.ui.openUserMenu ? 'blur-sm' : ''" class="min-w-0">
     <?= $content ?>
   </main>
 
-  <!-- TOAST -->
   <?php include __DIR__ . '/../partials/toast.php'; ?>
 
+  <footer class="mt-16 border-t border-slate-200 bg-white sm:mt-20">
+    <div class="user-container py-10 sm:py-12">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-10">
 
-  <!-- FOOTER -->
-  <footer class="mt-20 border-t border-gray-200">
-
-    <div class="px-d py-10">
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-
-        <!-- BRAND -->
-        <div>
-          <h3 class="font-poppins text-lg font-semibold mb-3">
-            GG MART
-          </h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Marketplace resmi Sinode GMIT untuk mendukung produk lokal dan UMKM
-            di Nusa Tenggara Timur.
+        <div class="md:col-span-1">
+          <div class="mb-3 flex items-center gap-2 font-poppins text-lg font-bold text-slate-900">
+            <img :src="BASE_URL + '/assets/logo.png'" class="h-7 w-7 object-contain" alt="Logo GG MART">
+            <span>GG MART</span>
+          </div>
+          <p class="max-w-sm text-sm leading-6 text-slate-500">
+            Marketplace resmi Sinode GMIT untuk mendukung produk lokal dan UMKM di Nusa Tenggara Timur.
           </p>
         </div>
 
-        <!-- NAVIGASI -->
         <div>
-          <h4 class="font-semibold mb-3">Navigasi</h4>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li><a :href="BASE_URL" class="link">Beranda</a></li>
-            <li><a :href="BASE_URL + '/produk'" class="link">Produk</a></li>
-            <li><a :href="BASE_URL + '/tentang'" class="link">Tentang</a></li>
-            <li><a :href="BASE_URL + '/faq'" class="link">FAQ</a></li>
+          <h3 class="mb-3 text-sm font-bold text-slate-900">Navigasi</h3>
+          <ul class="space-y-1">
+            <li><a :href="BASE_URL" class="user-menu-item">Beranda</a></li>
+            <li><a :href="BASE_URL + '/produk'" class="user-menu-item">Produk</a></li>
+            <li><a :href="BASE_URL + '/tentang'" class="user-menu-item">Tentang</a></li>
+            <li><a :href="BASE_URL + '/faq'" class="user-menu-item">FAQ</a></li>
           </ul>
         </div>
 
-        <!-- MITRA -->
         <div>
-          <h4 class="font-semibold mb-3">Mitra</h4>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li><a href="#" class="link">Gabung Mitra</a></li>
-            <li><a href="#" class="link">Syarat & Ketentuan</a></li>
-            <li><a href="#" class="link">Kebijakan</a></li>
+          <h3 class="mb-3 text-sm font-bold text-slate-900">Mitra</h3>
+          <ul class="space-y-1">
+            <li><a href="#" class="user-menu-item">Gabung Mitra</a></li>
+            <li><a href="#" class="user-menu-item">Syarat &amp; Ketentuan</a></li>
+            <li><a href="#" class="user-menu-item">Kebijakan</a></li>
           </ul>
         </div>
 
-        <!-- KONTAK -->
         <div>
-          <h4 class="font-semibold mb-3">Kontak</h4>
-          <ul class="space-y-2 text-sm text-gray-600">
-            <li>Email: ggmart@gmit.or.id</li>
+          <h3 class="mb-3 text-sm font-bold text-slate-900">Kontak</h3>
+          <ul class="space-y-1 text-sm text-slate-500">
+            <li class="px-3 py-2.5">Email: ggmart@gmit.or.id</li>
             <li>
-              <a
-                :href="`https://wa.me/${$store.utils.NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`"
-                class="link">
+              <a :href="`https://wa.me/${$store.utils.NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`" class="user-menu-item">
                 WhatsApp Admin
               </a>
             </li>
-            <li>Kupang, NTT</li>
+            <li class="px-3 py-2.5">Kupang, NTT</li>
           </ul>
         </div>
 
       </div>
 
-      <!-- BOTTOM -->
-      <div class="mt-10 pt-6 border-t border-gray-100 text-center text-sm text-gray-500">
+      <div class="mt-8 border-t border-slate-100 pt-6 text-center text-xs text-slate-500 sm:mt-10 sm:text-sm">
         © <span x-text="new Date().getFullYear()"></span> GG MART - Sinode GMIT. All rights reserved.
       </div>
-
     </div>
   </footer>
 

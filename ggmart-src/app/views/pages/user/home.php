@@ -29,16 +29,45 @@
       Produk Lokal Unggulan
     </h2>
 
+    <!-- STATE -->
+    <div x-show="loading" x-cloak class="px-d pt-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" aria-label="Memuat produk unggulan">
+        <template x-for="i in 3" :key="i">
+          <div class="animate-pulse space-y-4">
+            <div class="aspect-[4/3] rounded-xl bg-gray-100"></div>
+            <div class="mx-auto h-6 w-2/3 rounded bg-gray-100"></div>
+            <div class="mx-auto h-4 w-5/6 rounded bg-gray-100"></div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div x-show="error" x-cloak class="px-d pt-8">
+      <div class="rounded-2xl border border-red-200 bg-red-50 px-5 py-6 text-center">
+        <p class="font-semibold text-red-800">Produk unggulan belum dapat dimuat.</p>
+        <p class="mt-1 text-sm text-red-700">Periksa koneksi lalu coba lagi.</p>
+        <button @click="load(); startAutoSlide()" class="btn-outline-primary btn-rounded mt-4 w-auto px-5">Coba Lagi</button>
+      </div>
+    </div>
+
+    <div x-show="!loading && !error && items.length === 0" x-cloak class="px-d pt-8">
+      <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-5 py-8 text-center">
+        <p class="font-semibold text-gray-800">Belum ada produk unggulan.</p>
+        <p class="mt-1 text-sm text-gray-500">Silakan lihat katalog untuk menemukan produk GG MART lainnya.</p>
+        <a :href="BASE_URL + '/produk'" class="btn-primary btn-rounded mt-4 w-auto px-5">Lihat Produk</a>
+      </div>
+    </div>
+
     <!-- WRAPPER -->
-    <div class="relative overflow-hidden">
+    <div x-show="!loading && !error && items.length > 0" class="relative overflow-hidden">
 
       <!-- LEFT BUTTON -->
       <button
         @mouseenter="clearInterval(interval)"
         @click="prev()"
-        class="absolute left-0 top-1/2 -translate-y-1/2 z-10
+        class="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-10
              bg-white/60 backdrop-blur-md hover:bg-white/80
-             w-14 h-14 rounded-full shadow">
+             w-11 h-11 sm:w-14 sm:h-14 rounded-full shadow">
         ‹
       </button>
 
@@ -46,9 +75,9 @@
       <button
         @mouseenter="clearInterval(interval)"
         @click="next()"
-        class="absolute right-0 top-1/2 -translate-y-1/2 z-10
+        class="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-10
              bg-white/60 backdrop-blur-md hover:bg-white/80
-             w-14 h-14 rounded-full shadow">
+             w-11 h-11 sm:w-14 sm:h-14 rounded-full shadow">
         ›
       </button>
 
@@ -146,6 +175,8 @@
   document.addEventListener('alpine:init', () => {
     Alpine.data('homePage', () => ({
       items: [],
+      loading: false,
+      error: false,
       index: 0,
 
       disableTransition: false,
@@ -165,6 +196,8 @@
       },
 
       async load() {
+        this.loading = true
+        this.error = false
         try {
           const res = await API.get('/produk/landing');
           const originalItems = res.data ?? [];
@@ -190,6 +223,9 @@
           }
         } catch (err) {
           this.items = [];
+          this.error = true;
+        } finally {
+          this.loading = false
         }
       },
 

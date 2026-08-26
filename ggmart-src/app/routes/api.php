@@ -15,7 +15,7 @@ get('/api/produk/list', 'ApiProdukController@list', ["role:admin,pimpinan"]);
 get('/api/produk/terkait', 'ApiProdukController@terkait');
 get('/api/produk/detail', 'ApiProdukController@detail');
 get('/api/produk/trx', 'ApiProdukController@trx', ["role:admin"]);
-get('/api/produk/dropdown', 'ApiProdukController@dropdown', ["role:admin"]);
+get('/api/produk/dropdown', 'ApiProdukController@dropdown', ["role:admin,pimpinan"]);
 get('/api/produk/public', 'ApiProdukController@public');
 get('/api/produk/landing', 'ApiProdukController@landing');
 get('/api/produk/tagline', 'ApiProdukController@generateTagline', ["role:admin"]);
@@ -36,8 +36,9 @@ delete('/api/user', 'ApiUserController@hapus', ["role:admin"]);
 
 // mutasi stok
 get('/api/mutasi/list', 'ApiMutasiStokController@list', ["role:admin,pimpinan"]);
-get('/api/mutasi/detail', 'ApiMutasiStokController@detail', ["role:admin"]);
-get('/api/mutasi/dropdown', 'ApiMutasiStokController@dropdown', ["role:admin"]);
+get('/api/mutasi/summary', 'ApiMutasiStokController@summary', ["role:admin,pimpinan"]);
+get('/api/mutasi/detail', 'ApiMutasiStokController@detail', ["role:admin,pimpinan"]);
+get('/api/mutasi/dropdown', 'ApiMutasiStokController@dropdown', ["role:admin,pimpinan"]);
 
 post('/api/mutasi', 'ApiMutasiStokController@tambah', ["role:admin"]);
 delete('/api/mutasi', 'ApiMutasiStokController@hapus', ["role:admin"]);
@@ -48,23 +49,23 @@ get('/api/transaksi/list', 'ApiTransaksiController@list', ["auth"]);
 get('/api/transaksi/detail', 'ApiTransaksiController@detail', ["auth"]);
 
 post('/api/transaksi', 'ApiTransaksiController@tambah_transaksi', ["role:admin"]); // kasir admin only
-post('/api/transaksi/user', 'ApiTransaksiController@tambah_transaksi_user', ["auth"]); // pesanan user
+post('/api/transaksi/user', 'ApiTransaksiController@tambah_transaksi_user', ["role:pelanggan"]); // pesanan pelanggan
 
 post('/api/transaksi/proses', 'ApiTransaksiController@proses_transaksi', ["role:admin"]); // proses
 post('/api/transaksi/konfirmasi', 'ApiTransaksiController@konfirmasi_transaksi', ["role:admin"]); // selesai
 
 post('/api/transaksi/batal', 'ApiTransaksiController@batal_transaksi', ["role:admin"]); // admin
-post('/api/transaksi/batal-pending', 'ApiTransaksiController@batal_transaksi_pending', ["auth"]); // pending user
+post('/api/transaksi/batal-pending', 'ApiTransaksiController@batal_transaksi_pending', ["role:pelanggan"]); // pending pelanggan
 
 
 // Keranjang
-get('/api/keranjang', 'ApiKeranjangController@list', ["auth"]);
+get('/api/keranjang', 'ApiKeranjangController@list', ["role:pelanggan"]);
 
-post('/api/keranjang', 'ApiKeranjangController@tambah', ["auth"]);
-put('/api/keranjang', 'ApiKeranjangController@update', ["auth"]);
+post('/api/keranjang', 'ApiKeranjangController@tambah', ["role:pelanggan"]);
+put('/api/keranjang', 'ApiKeranjangController@update', ["role:pelanggan"]);
 
-delete('/api/keranjang', 'ApiKeranjangController@hapus', ["auth"]);
-delete('/api/keranjang/clear', 'ApiKeranjangController@clear', ["auth"]);
+delete('/api/keranjang', 'ApiKeranjangController@hapus', ["role:pelanggan"]);
+delete('/api/keranjang/clear', 'ApiKeranjangController@clear', ["role:pelanggan"]);
 
 
 // Auth

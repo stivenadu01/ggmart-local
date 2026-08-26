@@ -32,7 +32,7 @@ class AuthController
         throw new Exception("Token sudah kadaluarsa", 410);
       }
 
-      verifyUser($user['id_user']);
+      verifyUser($user['id_pengguna']);
 
       view('auth/verify', [
         'status' => 'success',

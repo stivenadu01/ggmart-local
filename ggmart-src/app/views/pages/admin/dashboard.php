@@ -22,12 +22,12 @@
       </div>
       <button
         type="button"
-        class="icon-btn h-10 w-10 border border-slate-200 bg-white text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-900"
+        class="admin-action-icon"
         @click="$dispatch('dashboard-refresh')"
         title="Muat ulang dashboard"
         aria-label="Muat ulang dashboard">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20 11a8.1 8.1 0 0 0-14.9-4M4 5v4h4M4 13a8.1 8.1 0 0 0 14.9 4M20 19v-4h-4"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 11a8.1 8.1 0 0 0-14.9-4M4 5v4h4M4 13a8.1 8.1 0 0 0 14.9 4M20 19v-4h-4" />
         </svg>
       </button>
     </div>
@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
       <!-- PRODUCT -->
       <div class="admin-card p-4 sm:p-5">
@@ -54,57 +54,13 @@
           <div class="min-w-0">
             <p class="text-sm font-medium text-slate-500">Total Produk</p>
             <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
-               x-text="summary.total_produk"></p>
+              x-text="summary.total_produk"></p>
             <p class="mt-1 text-xs text-slate-400">Produk terdaftar</p>
           </div>
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m7 4 10 0 3 4-8 4-8-4 3-4Z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8v8l8 4 8-4V8M12 12v8"/>
-            </svg>
-          </span>
-        </div>
-      </div>
-
-      <!-- SALES -->
-      <div class="admin-card p-4 sm:p-5">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-sm font-medium text-slate-500">Penjualan Hari Ini</p>
-            <p class="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
-               x-text="utils.formatRupiah(summary.penjualan_hari_ini)"></p>
-            <div class="mt-1 flex items-center gap-1.5 text-xs font-semibold"
-                 :class="growthClass(summary.growth.penjualan)">
-              <span x-text="growthIcon(summary.growth.penjualan)"></span>
-              <span x-text="formatGrowth(summary.growth.penjualan)"></span>
-              <span class="font-normal text-slate-400">vs kemarin</span>
-            </div>
-          </div>
-          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 17h18M5 17V7h14v10M8 11h2m2 0h2m-6 3h2m2 0h2"/>
-            </svg>
-          </span>
-        </div>
-      </div>
-
-      <!-- PROFIT -->
-      <div class="admin-card p-4 sm:p-5">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-sm font-medium text-slate-500">Laba Hari Ini</p>
-            <p class="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
-               x-text="utils.formatRupiah(summary.laba_hari_ini)"></p>
-            <div class="mt-1 flex items-center gap-1.5 text-xs font-semibold"
-                 :class="growthClass(summary.growth.laba)">
-              <span x-text="growthIcon(summary.growth.laba)"></span>
-              <span x-text="formatGrowth(summary.growth.laba)"></span>
-              <span class="font-normal text-slate-400">vs kemarin</span>
-            </div>
-          </div>
-          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M17 7.5c0-1.7-2.2-3-5-3s-5 1.3-5 3 2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="m7 4 10 0 3 4-8 4-8-4 3-4Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8v8l8 4 8-4V8M12 12v8" />
             </svg>
           </span>
         </div>
@@ -116,9 +72,9 @@
           <div class="min-w-0">
             <p class="text-sm font-medium text-slate-500">Transaksi Hari Ini</p>
             <p class="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
-               x-text="summary.transaksi_hari_ini"></p>
+              x-text="summary.transaksi_hari_ini"></p>
             <div class="mt-1 flex items-center gap-1.5 text-xs font-semibold"
-                 :class="growthClass(summary.growth.transaksi)">
+              :class="growthClass(summary.growth.transaksi)">
               <span x-text="growthIcon(summary.growth.transaksi)"></span>
               <span x-text="formatGrowth(summary.growth.transaksi)"></span>
               <span class="font-normal text-slate-400">vs kemarin</span>
@@ -126,12 +82,57 @@
           </div>
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4" />
             </svg>
           </span>
         </div>
       </div>
 
+    </div>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <!-- SALES -->
+      <div class="admin-card p-4 sm:p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-slate-500">Penjualan Hari Ini</p>
+            <p class="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
+              x-text="utils.formatRupiah(summary.penjualan_hari_ini)"></p>
+            <div class="mt-1 flex items-center gap-1.5 text-xs font-semibold"
+              :class="growthClass(summary.growth.penjualan)">
+              <span x-text="growthIcon(summary.growth.penjualan)"></span>
+              <span x-text="formatGrowth(summary.growth.penjualan)"></span>
+              <span class="font-normal text-slate-400">vs kemarin</span>
+            </div>
+          </div>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 17h18M5 17V7h14v10M8 11h2m2 0h2m-6 3h2m2 0h2" />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- PROFIT -->
+      <div class="admin-card p-4 sm:p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-slate-500">Laba Hari Ini</p>
+            <p class="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"
+              x-text="utils.formatRupiah(summary.laba_hari_ini)"></p>
+            <div class="mt-1 flex items-center gap-1.5 text-xs font-semibold"
+              :class="growthClass(summary.growth.laba)">
+              <span x-text="growthIcon(summary.growth.laba)"></span>
+              <span x-text="formatGrowth(summary.growth.laba)"></span>
+              <span class="font-normal text-slate-400">vs kemarin</span>
+            </div>
+          </div>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M17 7.5c0-1.7-2.2-3-5-3s-5 1.3-5 3 2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3" />
+            </svg>
+          </span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -145,12 +146,12 @@
           <div>
             <p class="text-sm font-medium text-slate-500">Omzet Bulan Ini</p>
             <p class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"
-               x-text="utils.formatRupiah(data.monthly.omzet_bulan_ini)"></p>
+              x-text="utils.formatRupiah(data.monthly.omzet_bulan_ini)"></p>
           </div>
           <div class="text-right">
             <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Growth</p>
             <p class="mt-1 text-sm font-bold" :class="growthClass(data.monthly.omzet_growth)"
-               x-text="formatGrowth(data.monthly.omzet_growth)"></p>
+              x-text="formatGrowth(data.monthly.omzet_growth)"></p>
           </div>
         </div>
       </div>
@@ -160,12 +161,12 @@
           <div>
             <p class="text-sm font-medium text-slate-500">Laba Bulan Ini</p>
             <p class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"
-               x-text="utils.formatRupiah(data.monthly.laba_bulan_ini)"></p>
+              x-text="utils.formatRupiah(data.monthly.laba_bulan_ini)"></p>
           </div>
           <div class="text-right">
             <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Growth</p>
             <p class="mt-1 text-sm font-bold" :class="growthClass(data.monthly.laba_growth)"
-               x-text="formatGrowth(data.monthly.laba_growth)"></p>
+              x-text="formatGrowth(data.monthly.laba_growth)"></p>
           </div>
         </div>
       </div>
@@ -305,7 +306,7 @@
           <p class="mt-0.5 text-xs text-slate-500">Pelanggan dengan total belanja tertinggi.</p>
         </div>
         <div class="divide-y divide-slate-100">
-          <template x-for="(u, index) in data.top_user" :key="u.id_user || index">
+          <template x-for="(u, index) in data.top_user" :key="u.id_pengguna || index">
             <div class="flex items-center gap-3 px-4 py-3.5 sm:px-5">
               <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-50 text-xs font-bold text-violet-700" x-text="index + 1"></span>
               <span class="min-w-0 flex-1 truncate text-sm font-semibold text-slate-700" x-text="u.nama"></span>
@@ -450,8 +451,7 @@
           type: 'line',
           data: {
             labels,
-            datasets: [
-              {
+            datasets: [{
                 label: 'Penjualan',
                 data: penjualan,
                 borderColor: '#0ea5e9',
@@ -498,19 +498,29 @@
             },
             scales: {
               x: {
-                grid: { display: false },
+                grid: {
+                  display: false
+                },
                 ticks: {
                   color: '#94a3b8',
-                  font: { size: 11 }
+                  font: {
+                    size: 11
+                  }
                 }
               },
               y: {
                 beginAtZero: true,
-                border: { display: false },
-                grid: { color: 'rgba(148,163,184,0.12)' },
+                border: {
+                  display: false
+                },
+                grid: {
+                  color: 'rgba(148,163,184,0.12)'
+                },
                 ticks: {
                   color: '#94a3b8',
-                  font: { size: 11 },
+                  font: {
+                    size: 11
+                  },
                   callback(value) {
                     const n = Number(value)
                     if (n >= 1000000) return 'Rp ' + (n / 1000000).toFixed(1) + ' jt'

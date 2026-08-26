@@ -154,6 +154,9 @@ class ApiLaporanController
     $sheet->getStyle("D2:F" . $sheet->getHighestRow())
       ->getNumberFormat()->setFormatCode('#,##0');
 
+    // ==== PENUTUP / TANDA TANGAN PIMPINAN ====
+    appendReportSignature($sheet, $row, 'F');
+
     // ==== AUTO SIZE & EXPORT ====
     foreach (range('A', $sheet->getHighestDataColumn()) as $col)
       $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -362,6 +365,9 @@ class ApiLaporanController
         break;
     }
 
+
+    // ==== PENUTUP / TANDA TANGAN PIMPINAN ====
+    appendReportSignature($sheet, $row, $mergeCol);
 
     // ==== AUTO SIZE & EXPORT ====
     foreach (range('A', $sheet->getHighestDataColumn()) as $col) $sheet->getColumnDimension($col)->setAutoSize(true);

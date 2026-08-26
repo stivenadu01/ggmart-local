@@ -1,170 +1,198 @@
-<div class="space-y-4 p-4" x-data="transaksiDetailPage()">
+<div class="admin-page space-y-5" x-data="transaksiDetailPage()">
 
   <!-- HEADER -->
-  <div class="flex-between flex-col md:flex-row gap-4">
-    <div>
-      <h1>Detail Transaksi</h1>
-      <p class="text-gray-500 text-sm">Informasi lengkap transaksi</p>
+  <header class="admin-page-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div class="min-w-0">
+      <h1 class="admin-page-title">Detail Transaksi</h1>
+      <p class="admin-page-subtitle">Periksa produk, pembayaran, HPP, laba, dan status transaksi secara lengkap.</p>
     </div>
-
-    <a href="#" @click.prevent="history.back()" class="btn-secondary w-auto">
-      ← Kembali
-    </a>
-  </div>
+    <button type="button" @click="history.back()" class="admin-action-secondary w-full sm:w-auto">← Kembali ke riwayat</button>
+  </header>
 
   <!-- LOADING -->
   <template x-if="loading">
-    <div class="text-center py-10 text-gray-400">Memuat...</div>
+    <div class="grid gap-4 lg:grid-cols-3 animate-pulse">
+      <section class="card space-y-4 p-5 lg:col-span-2">
+        <div class="h-5 w-40 rounded bg-slate-200"></div>
+        <div class="h-20 rounded-xl bg-slate-100"></div>
+        <div class="h-20 rounded-xl bg-slate-100"></div>
+      </section>
+      <section class="card space-y-4 p-5">
+        <div class="h-16 rounded bg-slate-100"></div>
+        <div class="h-16 rounded bg-slate-100"></div>
+        <div class="h-12 rounded bg-slate-100"></div>
+      </section>
+    </div>
   </template>
 
-  <!-- CONTENT -->
-  <template x-if="!loading && trx">
-    <div class="grid md:grid-cols-3 gap-4">
-      <!-- ================= LEFT ================= -->
-      <div class="md:col-span-2 space-y-4 max-h-[85dvh] overflow-y-auto">
-        <!-- PRODUK -->
-        <div class="bg-white rounded-xl shadow border overflow-hidden">
-          <div class="p-4 border-b font-semibold">Daftar Produk</div>
+  <!-- ERROR / NOT FOUND -->
+  <template x-if="!loading && error">
+    <section class="rounded-2xl border border-red-200 bg-red-50 p-5">
+      <p class="font-semibold text-red-800">Detail transaksi tidak dapat dimuat</p>
+      <p class="mt-1 text-sm text-red-700" x-text="error"></p>
+      <button type="button" @click="load()" class="admin-action-danger mt-4">Coba lagi</button>
+    </section>
+  </template>
 
-          <div class="divide-y">
-            <template x-for="item in trx.detail" :key="item.kode_produk">
-              <div class="p-4 flex gap-3 items-center">
+  <template x-if="!loading && trx && !error">
+    <div class="grid gap-4 lg:grid-cols-3">
+      <!-- MAIN -->
+      <div class="space-y-4 lg:col-span-2">
+        <!-- TRANSACTION INFO -->
+        <section class="card p-5">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Kode transaksi</p>
+              <p class="mt-1 break-all text-xl font-bold text-slate-900" x-text="trx.kode_transaksi"></p>
+              <p class="mt-1 text-sm text-slate-500" x-text="utils.formatDateTime(trx.tanggal_transaksi)"></p>
+            </div>
+            <span :class="statusClass(trx.status)" x-text="statusLabel(trx.status)"></span>
+          </div>
 
-                <img
-                  :src="item.gambar ? BASE_URL + '/uploads/' + item.gambar : '/assets/no-image.png'"
-                  class="w-14 h-14 object-cover rounded-lg">
-
-                <div class="flex-1">
-                  <div class="font-medium" x-text="item.nama_produk"></div>
-                  <div class="text-sm text-gray-500">
-                    <span x-text="utils.formatRupiah(item.harga_satuan)"></span>
-                    × <span x-text="item.jumlah"></span>
-                  </div>
-                </div>
-
-                <div class="font-semibold text-right"
-                  x-text="utils.formatRupiah(item.harga_satuan * item.jumlah)">
-                </div>
-
+          <dl class="mt-5 grid grid-cols-1 gap-4 border-t border-slate-200 pt-5" :class="trx.user_role === 'pelanggan' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'">
+            <template x-if="trx.user_role === 'pelanggan'">
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Pelanggan</dt>
+                <dd class="mt-1 font-medium text-slate-800" x-text="trx.user || 'Tidak diketahui'"></dd>
               </div>
             </template>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================= RIGHT ================= -->
-      <div class="space-y-4">
-        <!-- INFO -->
-        <div class="bg-white p-4 rounded-xl shadow border space-y-2">
-          <div class="flex-between">
+            <template x-if="trx.user_role !== 'pelanggan'">
+              <div>
+                <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Sumber transaksi</dt>
+                <dd class="mt-1 font-medium text-slate-800">Kasir</dd>
+                <p class="mt-1 text-xs text-slate-500">Transaksi dibuat langsung melalui menu Kasir.</p>
+              </div>
+            </template>
             <div>
-              <div class="text-sm text-gray-500">Kode Transaksi</div>
-              <div class="font-bold text-lg" x-text="trx.kode_transaksi"></div>
+              <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Metode pembayaran</dt>
+              <dd class="mt-1 font-medium uppercase text-slate-800" x-text="trx.metode_bayar"></dd>
             </div>
-
-            <span
-              :class="{
-                'bg-blue-100 text-blue-700': trx.status === 'pending',
-                'bg-yellow-100 text-yellow-700': trx.status === 'diproses',
-                'bg-green-100 text-green-700': trx.status === 'selesai',
-                'bg-red-100 text-red-700': trx.status === 'dibatalkan'
-              }"
-              class=" px-3 py-1 rounded-lg text-sm font-semibold"
-              x-text="trx.status">
-            </span>
-
-          </div>
-
-          <div class="text-sm text-gray-600">
-            Tanggal:
-            <span x-text="utils.formatDateTime(trx.tanggal_transaksi)"></span>
-          </div>
-
-          <div class="text-sm text-gray-600">
-            Pelanggan:
-            <span x-text="trx.user || '-'"></span>
-          </div>
-
-          <div class="text-sm text-gray-600">
-            Metode:
-            <span class="font-medium uppercase" x-text="trx.metode_bayar"></span>
-          </div>
-        </div>
-
-        <!-- TOTAL -->
-        <div class="bg-white p-4 rounded-xl shadow border space-y-2">
-          <div class="flex-between text-sm">
-            <span>Total Harga</span>
-            <span class="font-bold text-lg text-primary"
-              x-text="utils.formatRupiah(trx.total_harga)">
-            </span>
-          </div>
-          <template x-if="trx.status === 'selesai'">
-            <div class="flex-between text-sm">
-              <span>Total Modal</span>
-              <span x-text="utils.formatRupiah(trx.total_pokok)"></span>
+            <div>
+              <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Status</dt>
+              <dd class="mt-1" :class="statusClass(trx.status)" x-text="statusLabel(trx.status)"></dd>
             </div>
-          </template>
+          </dl>
+        </section>
 
-          <template x-if="trx.status === 'selesai'">
-            <div class="flex-between text-sm font-semibold text-green-600">
-              <span>Laba</span>
-              <span x-text="utils.formatRupiah(trx.total_harga - trx.total_pokok)"></span>
-            </div>
-          </template>
-        </div>
+        <!-- PRODUCTS -->
+        <section class="card overflow-hidden">
+          <div class="border-b border-slate-200 px-5 py-4">
+            <h2 class="font-semibold text-slate-900">Daftar Produk</h2>
+            <p class="mt-1 text-sm text-slate-500">Rincian barang yang tercatat pada transaksi ini.</p>
+          </div>
 
-        <!-- AKSI -->
-        <template x-if="trx.status !== 'dibatalkan'">
-          <div class="bg-white p-4 rounded-xl shadow border space-y-3">
-            <template x-if="trx.status === 'pending'">
-              <button class="flex-center gap-2 btn-outline-primary" @click="proses()">
-                <svg class=' w-6 h-6' xmlns="http://w3.org" viewBox="0 0 24 28">
-                  <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9.5 3h6L19 6.5v17c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2z" />
-                    <path d="M15.5 3v3.5H19" />
-                    <path opacity=".5" d="M8.5 10.5h5" />
-                    <circle cx="12" cy="17.5" r="2" />
-                    <path d="M12 14.5v1m0 4v1m-3-3h1m4 0h1m-5-2 .6.6m2.8 2.8.6.6m-4 0 .6-.6m2.8-2.8.6-.6" />
-                    <path d="M7.5 17.5a4.5 4.5 0 1 1 7 3.5" opacity=".7" />
-                    <path d="m12 22 2.5-1-.5-2.5" opacity=".7" />
-                  </g>
-                </svg>
-                Proses Pesanan
-              </button>
+          <div class="divide-y divide-slate-200">
+            <template x-if="!trx.detail || trx.detail.length === 0">
+              <div class="p-6 text-center text-sm text-slate-500">Tidak ada detail produk pada transaksi ini.</div>
             </template>
-            <template x-if="trx.status === 'diproses'">
-              <button class="flex-center gap-2 btn-outline-primary" @click="konfirmasi()">
-                <svg class='h-6 w-6' xmlns="http://w3.org" viewBox="0 0 24 28">
-                  <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9.5 3h6L19 6.5V15m-6 10.5H7c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h2.5M5 23.5V5" />
-                    <path d="M15.5 3v3.5H19m-10.5 4h7m-7 3.5h5" />
-                    <path opacity=".6" d="M8.5 17.5h3" />
-                    <circle cx="17.5" cy="20.5" r="4" fill="currentColor" fill-opacity=".05" />
-                    <path d="M15.5 20.5 17 22l2.5-3" stroke-width="1.5" />
-                  </g>
-                </svg>
-                Konfirmasi Pesanan
-              </button>
+
+            <template x-for="item in trx.detail" :key="item.kode_produk">
+              <article class="p-4 sm:p-5">
+                <div class="flex items-start gap-3 sm:gap-4">
+                  <img
+                    :src="item.gambar ? BASE_URL + '/uploads/' + item.gambar : BASE_URL + '/assets/no-image.png'"
+                    :alt="item.nama_produk || 'Produk'"
+                    class="h-14 w-14 shrink-0 rounded-xl border border-slate-200 object-cover sm:h-16 sm:w-16">
+
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div>
+                        <h3 class="font-semibold text-slate-900" x-text="item.nama_produk"></h3>
+                        <p class="mt-0.5 text-xs text-slate-500" x-text="item.kode_produk"></p>
+                      </div>
+                      <p class="font-bold text-slate-900" x-text="utils.formatRupiah(item.harga_satuan * item.jumlah)"></p>
+                    </div>
+
+                    <dl class="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+                      <div>
+                        <dt class="text-slate-500">Harga jual</dt>
+                        <dd class="mt-0.5 font-medium text-slate-800" x-text="utils.formatRupiah(item.harga_satuan)"></dd>
+                      </div>
+                      <div>
+                        <dt class="text-slate-500">Jumlah</dt>
+                        <dd class="mt-0.5 font-medium text-slate-800" x-text="item.jumlah"></dd>
+                      </div>
+                      <div>
+                        <dt class="text-slate-500">HPP rata-rata</dt>
+                        <dd class="mt-0.5 font-medium text-slate-800" x-text="utils.formatRupiah(item.harga_pokok)"></dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              </article>
             </template>
-            <button
-              @click="batal()"
-              class="w-full flex-center btn-danger gap-2">
-              <svg class='w-6 h-6' xmlns="http://w3.org" viewBox="0 0 24 28">
-                <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9.5 3h6L19 6.5V15m-6 10.5H7c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h2.5" />
-                  <path d="M15.5 3v3.5H19m-10.5 4h7m-7 3.5h5" />
-                  <path opacity=".6" d="M8.5 17.5h3" />
-                  <circle cx="17.5" cy="20.5" r="4" fill="currentColor" fill-opacity=".05" />
-                  <path d="m15.5 18.5 4 4m0-4-4 4" stroke-width="1.5" />
-                </g>
-              </svg>
-              Batalkan Transaksi
-            </button>
           </div>
-        </template>
+        </section>
       </div>
 
+      <!-- SIDEBAR -->
+      <aside class="space-y-4">
+        <!-- TOTAL -->
+        <section class="card">
+          <p class="text-sm font-medium text-slate-500">Total transaksi</p>
+          <p class="mt-2 text-2xl font-bold text-primary" x-text="utils.formatRupiah(trx.total_harga)"></p>
+          <p class="form-help">Nilai penjualan yang tercatat pada transaksi.</p>
+        </section>
+
+        <!-- PROFIT -->
+        <section class="card p-5">
+          <h2 class="font-semibold text-slate-900">Ringkasan keuangan</h2>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex items-center justify-between gap-4">
+              <dt class="text-slate-500">Total penjualan</dt>
+              <dd class="font-semibold text-slate-900" x-text="utils.formatRupiah(trx.total_harga)"></dd>
+            </div>
+            <template x-if="trx.status === 'selesai'">
+              <div class="flex items-center justify-between gap-4">
+                <dt class="text-slate-500">Total HPP</dt>
+                <dd class="font-semibold text-slate-900" x-text="utils.formatRupiah(trx.total_pokok)"></dd>
+              </div>
+            </template>
+            <template x-if="trx.status === 'selesai'">
+              <div class="flex items-center justify-between gap-4 border-t border-slate-200 pt-3">
+                <dt class="font-semibold text-slate-700">Laba</dt>
+                <dd class="font-bold text-emerald-600" x-text="utils.formatRupiah(trx.total_harga - trx.total_pokok)"></dd>
+              </div>
+            </template>
+            <template x-if="trx.status !== 'selesai'">
+              <p class="rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">HPP dan laba ditampilkan setelah transaksi berstatus selesai.</p>
+            </template>
+          </dl>
+        </section>
+
+        <!-- ACTIONS -->
+        <template x-if="trx.status !== 'dibatalkan'">
+          <section class="card p-5">
+            <h2 class="font-semibold text-slate-900">Aksi transaksi</h2>
+            <p class="form-help">Pilih tindakan sesuai status transaksi saat ini.</p>
+
+            <div class="mt-4 space-y-2">
+              <template x-if="trx.status === 'pending'">
+                <button type="button" class="admin-action-primary w-full" @click="proses()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
+                  <span x-text="processing ? 'Memproses...' : 'Proses Pesanan'"></span>
+                </button>
+              </template>
+
+              <template x-if="trx.status === 'diproses'">
+                <button type="button" class="admin-action-primary w-full" @click="konfirmasi()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
+                  <span x-text="processing ? 'Mengonfirmasi...' : 'Konfirmasi Pesanan'"></span>
+                </button>
+              </template>
+
+              <button type="button" @click="batal()" :disabled="processing" class="admin-action-danger w-full" :class="{'cursor-not-allowed opacity-60': processing}">
+                Batalkan Transaksi
+              </button>
+            </div>
+          </section>
+        </template>
+
+        <template x-if="trx.status === 'dibatalkan'">
+          <section class="rounded-2xl border border-red-200 bg-red-50 p-5">
+            <p class="font-semibold text-red-800">Transaksi dibatalkan</p>
+            <p class="mt-1 text-sm leading-5 text-red-700">Tidak ada aksi lanjutan yang tersedia untuk transaksi ini.</p>
+          </section>
+        </template>
+      </aside>
     </div>
   </template>
 
@@ -175,30 +203,45 @@
     return {
       trx: null,
       loading: true,
+      error: '',
+      processing: false,
       kode: <?= json_encode(params('kode')) ?>,
+
+      statusClass(status) {
+        if (status === 'selesai') return 'status-success'
+        if (status === 'dibatalkan') return 'status-danger'
+        if (status === 'diproses') return 'status-warning'
+        return 'status-neutral'
+      },
+
+      statusLabel(status) {
+        const labels = {
+          pending: 'Menunggu',
+          diproses: 'Diproses',
+          selesai: 'Selesai',
+          dibatalkan: 'Dibatalkan'
+        }
+        return labels[status] || status
+      },
 
       async init() {
         await this.load()
       },
 
       async load() {
+        this.loading = true
+        this.error = ''
         try {
-          if (!this.kode) {
-            Alpine.store('ui').toast('Kode transaksi tidak valid')
-            return history.back()
-          }
+          if (!this.kode) throw new Error('Kode transaksi tidak valid')
 
-          const res = await API.get('/transaksi/detail?k=' + this.kode)
+          const res = await API.get('/transaksi/detail?k=' + encodeURIComponent(this.kode))
+          if (!res.success) throw new Error(res.message || 'Gagal memuat detail transaksi')
 
-          if (res.success) {
-            this.trx = res.data
-            console.log(this.trx);
-          } else {
-            Alpine.store('ui').toast(res.message || 'Gagal load data')
-          }
-
+          this.trx = res.data
         } catch (err) {
           console.error(err)
+          this.trx = null
+          this.error = err?.message || 'Terjadi kesalahan saat memuat detail transaksi.'
         } finally {
           this.loading = false
         }
@@ -207,47 +250,52 @@
       async proses() {
         const ok = await Alpine.store('ui').confirm('Proses pesanan ini?')
         if (!ok) return
+        this.processing = true
         try {
-          await API.post('/transaksi/proses', {
-            kode_transaksi: this.trx.kode_transaksi
-          })
+          const res = await API.post('/transaksi/proses', { kode_transaksi: this.trx.kode_transaksi })
+          if (!res.success) throw new Error(res.message || 'Gagal memproses pesanan')
           Alpine.store('ui').toast('Pesanan diproses')
-          this.load()
+          await this.load()
         } catch (err) {
           console.error(err)
+          Alpine.store('ui').toast(err?.message || 'Gagal memproses pesanan')
+        } finally {
+          this.processing = false
         }
       },
-
 
       async konfirmasi() {
         const ok = await Alpine.store('ui').confirm('Konfirmasi pesanan ini?')
         if (!ok) return
+        this.processing = true
         try {
-          const res = await API.post('/transaksi/konfirmasi', {
-            kode_transaksi: this.trx.kode_transaksi
-          })
-          if (res.success) {
-            Alpine.store('ui').toast('Pesanan dikonfirmasi')
-            await this.load()
-          }
+          const res = await API.post('/transaksi/konfirmasi', { kode_transaksi: this.trx.kode_transaksi })
+          if (!res.success) throw new Error(res.message || 'Gagal mengonfirmasi pesanan')
+          Alpine.store('ui').toast('Pesanan dikonfirmasi')
+          await this.load()
         } catch (err) {
           console.error(err)
+          Alpine.store('ui').toast(err?.message || 'Gagal mengonfirmasi pesanan')
+        } finally {
+          this.processing = false
         }
       },
 
       async batal() {
-        const ok = await Alpine.store('ui').confirm(`Yakin ingin membatalkan transaksi ${this.trx.status=='selesai'?'yang telah selesai' : ''} ini ?`)
+        const jenis = this.trx.status === 'selesai' ? 'yang telah selesai' : ''
+        const ok = await Alpine.store('ui').confirm(`Yakin ingin membatalkan transaksi ${jenis} ini?`)
         if (!ok) return
+        this.processing = true
         try {
-          const res = await API.post('/transaksi/batal', {
-            kode_transaksi: this.trx.kode_transaksi
-          })
-          if (res.success) {
-            Alpine.store('ui').toast('transaksi dibatalkan')
-            await this.load()
-          }
+          const res = await API.post('/transaksi/batal', { kode_transaksi: this.trx.kode_transaksi })
+          if (!res.success) throw new Error(res.message || 'Gagal membatalkan transaksi')
+          Alpine.store('ui').toast('Transaksi dibatalkan')
+          await this.load()
         } catch (err) {
           console.error(err)
+          Alpine.store('ui').toast(err?.message || 'Gagal membatalkan transaksi')
+        } finally {
+          this.processing = false
         }
       }
     }

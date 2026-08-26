@@ -1,81 +1,104 @@
-<div class="py-10 max-w-4xl mx-auto" x-data="profilPage()">
+<div class="py-8 sm:py-10" x-data="profilPage()">
+  <div class="mx-auto max-w-4xl space-y-6">
+    <header class="px-4 sm:px-0">
+      <p class="text-sm font-semibold text-emerald-600">Akun</p>
+      <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Profil Saya</h1>
+      <p class="mt-2 text-sm text-slate-500">Kelola informasi pribadi yang digunakan untuk pesanan dan komunikasi GG-Mart.</p>
+    </header>
 
-  <div class="px-d mb-6">
-    <h1>Profil Saya</h1>
-    <p class="text-gray-500 text-sm">Kelola informasi akun Anda</p>
-  </div>
-
-  <div class="card px-d py-6 space-y-6">
-    <!-- PROFILE INFO -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-      <div class="flex flex-col items-center">
-        <div class="w-28 h-28 rounded-full bg-gray-200 flex-center text-sm font-medium">
-          <span x-text="$store.auth.user.email.charAt(0).toUpperCase()"></span>
+    <section class="card overflow-hidden">
+      <div class="grid gap-6 p-5 sm:p-6 md:grid-cols-[180px_1fr] md:items-start">
+        <div class="flex flex-col items-center text-center">
+          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-emerald-50 text-2xl font-bold text-emerald-700 ring-8 ring-slate-50" aria-hidden="true">
+            <span x-text="initials"></span>
+          </div>
+          <span class="mt-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold capitalize text-slate-600" x-text="roleLabel"></span>
+          <p class="mt-2 text-xs text-slate-400">Akun GG-Mart</p>
         </div>
-        <div class="mt-3 text-sm text-gray-500" x-text="user.role"></div>
+
+        <div class="min-w-0">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <p class="label">Nama</p>
+              <p class="mt-1 break-words text-sm font-semibold text-slate-800" x-text="user.nama || '-' "></p>
+            </div>
+            <div>
+              <p class="label">Email</p>
+              <p class="mt-1 break-all text-sm text-slate-700" x-text="user.email || '-' "></p>
+            </div>
+            <div>
+              <p class="label">Nomor HP</p>
+              <p class="mt-1 text-sm text-slate-700" x-text="user.no_hp || 'Belum diisi'"></p>
+            </div>
+            <div>
+              <p class="label">Alamat</p>
+              <p class="mt-1 whitespace-pre-line text-sm text-slate-700" x-text="user.alamat || 'Belum diisi'"></p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-col gap-2 border-t border-slate-100 pt-5 sm:flex-row">
+            <button type="button" @click="startEdit()" class="user-action-primary w-full sm:w-auto">
+              Edit Profil
+            </button>
+            <button type="button" @click="logout()" class="user-action-danger w-full sm:w-auto">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section x-show="editing" x-cloak class="card p-5 sm:p-6">
+      <div class="mb-5">
+        <h2 class="text-lg font-bold text-slate-900">Edit Informasi Profil</h2>
+        <p class="mt-1 text-sm text-slate-500">Perbarui data yang ingin digunakan pada akun Anda.</p>
       </div>
 
-      <div class="md:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <form @submit.prevent="save" class="space-y-5" novalidate>
+        <div class="grid gap-5 sm:grid-cols-2">
           <div>
-            <label class="label">Nama</label>
-            <div class="text-sm font-medium" x-text="user.nama"></div>
+            <label for="profil-nama" class="label">Nama *</label>
+            <input id="profil-nama" type="text" x-model.trim="form.nama" class="input mt-1" placeholder="Contoh: Stiven Adu" autocomplete="name" required>
+            <p class="form-help">Gunakan nama yang mudah dikenali untuk pesanan dan komunikasi.</p>
           </div>
-          <div>
-            <label class="label">Email</label>
-            <div class="text-sm" x-text="user.email"></div>
-          </div>
-          <div>
-            <label class="label">Telepon</label>
-            <div class="text-sm" x-text="user.no_hp || '-' "></div>
-          </div>
-          <div>
-            <label class="label">Alamat</label>
-            <div class="text-sm" x-text="user.alamat || '-' "></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- ACTIONS -->
-    <div class="flex gap-3">
-      <button @click="editing = true" class="btn-primary w-auto">Edit Profil</button>
-      <button @click="logout()" class="btn-outline-danger w-auto">Logout</button>
-    </div>
-
-    <!-- EDIT FORM -->
-    <template x-if="editing">
-      <form @submit.prevent="save" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label class="label">Nama</label>
-            <input type="text" x-model="form.nama" class="input" required />
-          </div>
-          <div>
-            <label class="label">Email</label>
-            <input type="email" x-model="form.email" class="input" required />
+            <label for="profil-email" class="label">Email *</label>
+            <input id="profil-email" type="email" x-model.trim="form.email" class="input mt-1" placeholder="Contoh: stiven@email.com" autocomplete="email" required>
+            <p class="form-help">Gunakan email aktif yang dapat Anda akses.</p>
           </div>
         </div>
 
         <div>
-          <label class="label">Telepon</label>
-          <input type="text" x-model="form.no_hp" class="input" />
+          <label for="profil-nohp" class="label">Nomor HP</label>
+          <input id="profil-nohp" type="tel" x-model.trim="form.no_hp" class="input mt-1" placeholder="Contoh: 081234567890" autocomplete="tel">
+          <p class="form-help">Opsional. Masukkan nomor yang dapat dihubungi.</p>
         </div>
 
         <div>
-          <label class="label">Alamat</label>
-          <textarea x-model="form.alamat" class="input" rows="3"></textarea>
+          <label for="profil-alamat" class="label">Alamat</label>
+          <textarea id="profil-alamat" x-model.trim="form.alamat" class="input mt-1" rows="4" placeholder="Contoh: Jl. Timor Raya No. 10, Kupang" autocomplete="street-address"></textarea>
+          <p class="form-help">Opsional. Alamat dapat membantu saat komunikasi terkait pesanan.</p>
         </div>
 
-        <div class="flex gap-3">
-          <button type="submit" class="btn-primary">Simpan</button>
-          <button type="button" @click="cancel()" class="btn-secondary">Batal</button>
+        <div x-show="error" x-cloak class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert" x-text="error"></div>
+
+        <div class="flex flex-col-reverse gap-2 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <button type="button" @click="cancel()" class="user-action-secondary w-full sm:w-auto" :disabled="saving">Batal</button>
+          <button type="submit" class="user-action-primary w-full sm:w-auto" :disabled="saving || !canSave">
+            <span x-show="!saving">Simpan Perubahan</span>
+            <span x-show="saving" x-cloak>Menyimpan...</span>
+          </button>
         </div>
       </form>
-    </template>
+    </section>
 
+    <section class="card p-5 sm:p-6">
+      <h2 class="text-base font-bold text-slate-900">Keamanan akun</h2>
+      <p class="mt-1 text-sm text-slate-500">Password dapat diubah melalui fitur lupa password jika Anda perlu membuat password baru.</p>
+      <a href="<?= BASE_URL ?>/login" class="mt-4 inline-flex text-sm font-semibold text-emerald-600 hover:text-emerald-700">Buka halaman login →</a>
+    </section>
   </div>
-
 </div>
 
 <script>
@@ -83,41 +106,79 @@
     return {
       user: Alpine.store('auth').user || {},
       editing: false,
+      saving: false,
+      error: '',
       form: {},
 
       init() {
         this.resetForm()
       },
 
+      get initials() {
+        const value = (this.user.nama || this.user.email || 'U').trim()
+        return value.split(/\s+/).slice(0, 2).map(part => part.charAt(0)).join('').toUpperCase()
+      },
+
+      get roleLabel() {
+        const roles = { pelanggan: 'Pelanggan', admin: 'Admin', pimpinan: 'Pimpinan' }
+        return roles[this.user.role] || this.user.role || 'Pelanggan'
+      },
+
+      get canSave() {
+        return Boolean(this.form.nama?.trim() && this.form.email?.trim())
+      },
+
       resetForm() {
         this.form = {
-          ...this.user
+          nama: this.user.nama || '',
+          email: this.user.email || '',
+          no_hp: this.user.no_hp || '',
+          alamat: this.user.alamat || ''
         }
+        this.error = ''
+      },
+
+      startEdit() {
+        this.resetForm()
+        this.editing = true
+        this.$nextTick(() => document.getElementById('profil-nama')?.focus())
       },
 
       cancel() {
+        if (this.saving) return
         this.editing = false
         this.resetForm()
       },
 
       async save() {
+        if (!this.canSave || this.saving) return
+        this.error = ''
+        this.saving = true
+
         try {
-          await API.put('/user', this.form)
-          // await Alpine.store('auth').refresh() // assume store has refresh
-          this.user = Alpine.store('auth').user
+          const res = await API.put('/user', {
+            nama: this.form.nama.trim(),
+            email: this.form.email.trim(),
+            no_hp: this.form.no_hp?.trim() || '',
+            alamat: this.form.alamat?.trim() || ''
+          })
+
+          if (!res?.success) throw new Error(res?.message || 'Profil gagal diperbarui.')
+
+          await Alpine.store('auth').refresh()
+          this.user = { ...Alpine.store('auth').user }
           this.editing = false
-          Alpine.store('auth').refresh()
-          window.location.reload() // reload page to update session data
-          Alpine.store('ui').toast('Profil berhasil disimpan')
+          this.resetForm()
+          Alpine.store('ui').toast(res.message || 'Profil berhasil diperbarui.')
         } catch (err) {
-          console.error(err)
+          this.error = err?.message || 'Profil gagal diperbarui. Silakan coba lagi.'
+        } finally {
+          this.saving = false
         }
       },
 
-      logout() {
-        API.post('/auth/logout').finally(() => {
-          window.location.href = BASE_URL + '/'
-        })
+      async logout() {
+        await Alpine.store('auth').logout()
       }
     }
   }

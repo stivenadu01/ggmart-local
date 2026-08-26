@@ -230,16 +230,21 @@ document.addEventListener('alpine:init', () => {
   // 🛒 CART
   Alpine.store('cart', {
     items: [],
+    checkingOut: false,
     async init() {
-      if (!Alpine.store('auth').user) {
+      const user = Alpine.store('auth').user;
+
+      if (!user || user.role !== 'pelanggan') {
         this.items = [];
         return;
       }
+
+
       await this.load();
     },
 
     async load() {
-      const res = await API.get('/keranjang?u=' + Alpine.store('auth').user.id_user, false);
+      const res = await API.get('/keranjang?u=' + Alpine.store('auth').user.id_pengguna, false);
       if (res.success) {
         this.items = res.data || [];
       }
@@ -259,7 +264,7 @@ document.addEventListener('alpine:init', () => {
       try {
         const res = await API.post('/keranjang', {
           ...item,
-          id_user: Alpine.store('auth').user.id_user
+          id_pengguna: Alpine.store('auth').user.id_pengguna
         }, false);
         if (res.success) {
           if (imgEl) await Alpine.store('ui').flyToCart(imgEl);
@@ -273,7 +278,7 @@ document.addEventListener('alpine:init', () => {
     async remove(id_keranjang) {
       try {
         const payload = {
-          id_user: Alpine.store('auth').user.id_user,
+          id_pengguna: Alpine.store('auth').user.id_pengguna,
           id_keranjang: id_keranjang
         }
         await API.delete('/keranjang', payload, false);
@@ -288,7 +293,7 @@ document.addEventListener('alpine:init', () => {
           Alpine.store('ui').toast(`Stok ${item.nama_produk} tidak cukup`, 'error');
           return;
         }
-        item.id_user = Alpine.store('auth').user.id_user
+        item.id_pengguna = Alpine.store('auth').user.id_pengguna
         await API.put('/keranjang', item, false);
       } finally {
         await this.load();
@@ -296,7 +301,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     async clear() {
-      const res = await API.delete('/keranjang/clear', { id_user: Alpine.store('auth').user.id_user }, false);
+      const res = await API.delete('/keranjang/clear', { id_pengguna: Alpine.store('auth').user.id_pengguna }, false);
       if (res.success) {
         this.items = [];
       }
@@ -311,6 +316,8 @@ document.addEventListener('alpine:init', () => {
     },
 
     async checkout() {
+      if (this.checkingOut) return;
+      this.checkingOut = true;
       try {
         if (!Alpine.store('auth').user || Alpine.store('auth').user.role == 'admin') {
           Alpine.store('ui').toast('Anda tidak bisa checkout', 'warning')
@@ -318,7 +325,7 @@ document.addEventListener('alpine:init', () => {
         }
 
         const payload = {
-          id_user: Alpine.store('auth').user.id_user,
+          id_pengguna: Alpine.store('auth').user.id_pengguna,
           total_harga: this.totalHarga,
           detail: this.items.map(i => ({
             kode_produk: i.kode_produk,

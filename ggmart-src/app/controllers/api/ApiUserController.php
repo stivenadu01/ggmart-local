@@ -38,19 +38,19 @@ class ApiUserController
   {
     try {
       $currentUser = $_SESSION['user'] ?? null;
-      $id_user = $_GET['id'] ?? null;
+      $id_pengguna = $_GET['id'] ?? null;
       if (!$currentUser) throw new Exception('Unauthorized', 401);
 
       // Admin/pimpinan boleh melihat detail user untuk kebutuhan administrasi/read-only.
       // User biasa hanya boleh melihat dirinya sendiri.
       if (!in_array($currentUser['role'], ['admin', 'pimpinan'], true)) {
-        $id_user = $currentUser['id_user'];
-      } elseif (!$id_user) {
+        $id_pengguna = $currentUser['id_pengguna'];
+      } elseif (!$id_pengguna) {
         throw new Exception('ID user tidak valid', 400);
       }
 
-      $user = findUser($id_user);
-      if (!$user) throw new Exception('User tidak ditemukan', 404);
+      $user = findUser($id_pengguna);
+      if (!$user) throw new Exception('Pengguna tidak ditemukan', 404);
 
       return response(['success' => true, 'data' => $user]);
     } catch (Exception $e) {
@@ -79,25 +79,25 @@ class ApiUserController
       }
 
       if (findUserByEmail($input['email'])) {
-        throw new Exception('Email sudah digunakan oleh user lain.', 409);
+        throw new Exception('Email sudah digunakan oleh pengguna lain.', 409);
       }
 
-      if (empty($input['role'])) $input['role'] = 'user';
-      if (!in_array($input['role'], ['admin', 'pimpinan', 'user'], true)) {
-        throw new Exception('Role user tidak valid.', 422);
+      if (empty($input['role'])) $input['role'] = 'pelanggan';
+      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan'], true)) {
+        throw new Exception('Role pengguna tidak valid.', 422);
       }
 
       if (!tambahUser($input)) {
-        throw new Exception('Gagal menambahkan user.', 500);
+        throw new Exception('Gagal menambahkan pengguna.', 500);
       }
 
-      return response(['success' => true, 'message' => 'User berhasil ditambahkan'], 201);
+      return response(['success' => true, 'message' => 'Pengguna berhasil ditambahkan'], 201);
     } catch (Exception $e) {
       return response(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
     }
   }
 
-  // === UPDATE USER ===
+  // === UPDATE pengguna ===
   public function ubah()
   {
     try {
@@ -108,12 +108,12 @@ class ApiUserController
       $isAdmin = ($currentUser['role'] === 'admin');
       // User biasa tidak boleh menentukan target user maupun mengubah role.
       if (!$isAdmin) {
-        $id_user = (int)$currentUser['id_user'];
-        $input['id_user'] = $id_user;
+        $id_pengguna = (int)$currentUser['id_pengguna'];
+        $input['id_pengguna'] = $id_pengguna;
         $input['role'] = $currentUser['role'];
       } else {
-        $id_user = isset($input['id_user']) ? (int)$input['id_user'] : 0;
-        if (!$id_user) throw new Exception('ID user wajib diisi.', 400);
+        $id_pengguna = isset($input['id_pengguna']) ? (int)$input['id_pengguna'] : 0;
+        if (!$id_pengguna) throw new Exception('ID pengguna wajib diisi.', 400);
       }
 
       if (empty($input['nama']) || empty($input['email'])) {
@@ -122,34 +122,34 @@ class ApiUserController
       if ($isAdmin && empty($input['role'])) {
         throw new Exception('Role wajib diisi.', 422);
       }
-      if (!in_array($input['role'], ['admin', 'pimpinan', 'user'], true)) {
-        throw new Exception('Role user tidak valid.', 422);
+      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan'], true)) {
+        throw new Exception('Role pengguna tidak valid.', 422);
       }
 
       if (!filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
         throw new Exception('Format email tidak valid.', 422);
       }
 
-      $user = findUser($id_user);
-      if (!$user) throw new Exception('User tidak ditemukan.', 404);
-      if ($isAdmin && (int)$id_user === (int)$currentUser['id_user'] && $input['role'] !== 'admin') {
+      $user = findUser($id_pengguna);
+      if (!$user) throw new Exception('Pengguna tidak ditemukan.', 404);
+      if ($isAdmin && (int)$id_pengguna === (int)$currentUser['id_pengguna'] && $input['role'] !== 'admin') {
         throw new Exception('Admin yang sedang aktif tidak boleh menurunkan role dirinya sendiri.', 400);
       }
 
       $exist = findUserByEmail($input['email']);
-      if ($exist && $exist['id_user'] != $id_user) {
-        throw new Exception('Email sudah digunakan oleh user lain.', 409);
+      if ($exist && $exist['id_pengguna'] != $id_pengguna) {
+        throw new Exception('Email sudah digunakan oleh pengguna lain.', 409);
       }
 
       if (!empty($input['password']) && isset($input['rePassword']) && $input['password'] !== $input['rePassword']) {
         throw new Exception('Konfirmasi password tidak cocok.', 422);
       }
 
-      if (!editUser($id_user, $input)) {
-        throw new Exception('User gagal diupdate.', 500);
+      if (!editUser($id_pengguna, $input)) {
+        throw new Exception('Pengguna gagal diupdate.', 500);
       }
 
-      return response(['success' => true, 'message' => 'User berhasil diupdate']);
+      return response(['success' => true, 'message' => 'Pengguna berhasil diupdate']);
     } catch (Exception $e) {
       return response(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
     }
@@ -160,22 +160,22 @@ class ApiUserController
   {
     try {
       $input = request();
-      $id_user = $input['id_user'] ?? null;
+      $id_pengguna = $input['id_pengguna'] ?? null;
 
-      if (!$id_user) throw new Exception('ID user wajib diisi.', 400);
+      if (!$id_pengguna) throw new Exception('ID pengguna wajib diisi.', 400);
 
       $currentUser = $_SESSION['user'] ?? null;
       if (!$currentUser || $currentUser['role'] !== 'admin') {
         throw new Exception('Akses ditolak.', 403);
       }
-      if ((int)$id_user === (int)$currentUser['id_user']) {
+      if ((int)$id_pengguna === (int)$currentUser['id_pengguna']) {
         throw new Exception('Akun yang sedang digunakan tidak boleh dihapus.', 400);
       }
 
-      $user = findUser($id_user);
-      if (!$user) throw new Exception('User tidak ditemukan.', 404);
+      $user = findUser($id_pengguna);
+      if (!$user) throw new Exception('Pengguna tidak ditemukan.', 404);
 
-      if (!hapusUser($id_user)) {
+      if (!hapusUser($id_pengguna)) {
         throw new Exception('Gagal menghapus user.', 500);
       }
 

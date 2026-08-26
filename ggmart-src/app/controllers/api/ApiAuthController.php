@@ -81,7 +81,7 @@ class ApiAuthController
         throw new Exception("Email sudah digunakan", 409);
       }
 
-      $input['role'] = 'user';
+      $input['role'] = 'pelanggan';
 
       $result = tambahUser($input, true);
 
@@ -170,7 +170,7 @@ class ApiAuthController
       }
 
       // update password
-      updateUserPassword($resetRequest['id_user'], $newPassword);
+      updateUserPassword($resetRequest['id_pengguna'], $newPassword);
 
       return response([
         'success' => true,
@@ -199,7 +199,7 @@ class ApiAuthController
   // ME
   public function me()
   {
-    $user_id = $_SESSION['user']['id_user'] ?? null;
+    $user_id = $_SESSION['user']['id_pengguna'] ?? null;
     if (!$user_id) {
       return response(['success' => false, 'message' => 'Unauthorized'], 401);
     }

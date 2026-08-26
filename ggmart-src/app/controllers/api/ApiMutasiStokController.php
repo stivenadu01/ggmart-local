@@ -34,6 +34,40 @@ class ApiMutasiStokController
     }
   }
 
+  // === SUMMARY ===
+  public function summary()
+  {
+    try {
+      $conn = db();
+
+      $row = $conn->query("
+        SELECT
+          COUNT(*) AS total_produk,
+          SUM(CASE WHEN stok > 0 AND stok <= 5 THEN 1 ELSE 0 END) AS stok_menipis,
+          SUM(CASE WHEN stok = 0 THEN 1 ELSE 0 END) AS stok_habis
+        FROM produk
+      ")->fetch_assoc();
+
+      $batch = $conn->query("
+        SELECT COUNT(*) AS batch_aktif
+        FROM mutasi_stok
+        WHERE type = 'masuk' AND sisa_stok > 0
+      ")->fetch_assoc();
+
+      return response([
+        'success' => true,
+        'data' => [
+          'total_produk' => (int)($row['total_produk'] ?? 0),
+          'stok_menipis' => (int)($row['stok_menipis'] ?? 0),
+          'stok_habis' => (int)($row['stok_habis'] ?? 0),
+          'batch_aktif' => (int)($batch['batch_aktif'] ?? 0)
+        ]
+      ]);
+    } catch (Exception $e) {
+      return response(['success' => false, 'message' => $e->getMessage()], $e->getCode() ?: 500);
+    }
+  }
+
   // === DETAIL ===
   public function detail()
   {

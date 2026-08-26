@@ -27,8 +27,7 @@
   <div
     x-data="{ sidebarOpen: false }"
     @keydown.escape.window="sidebarOpen = false"
-    class="admin-shell min-h-dvh"
-  >
+    class="admin-shell min-h-dvh">
 
     <!-- MOBILE OVERLAY -->
     <div
@@ -44,7 +43,7 @@
     <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <!-- MAIN AREA -->
-    <div class="admin-main min-w-0 flex min-h-dvh flex-col">
+    <div class="admin-main min-w-0 flex h-dvh flex-col overflow-auto">
       <header class="admin-topbar sticky top-0 z-[70] border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div class="flex min-h-16 items-center gap-3 px-4 sm:px-5 lg:px-7">
           <button
@@ -53,7 +52,7 @@
             class="admin-menu-button inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 lg:hidden"
             aria-label="Buka menu admin">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+              <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
             </svg>
           </button>
 
@@ -75,7 +74,7 @@
 
             <div class="hidden max-w-44 sm:block">
               <p class="truncate text-sm font-semibold text-slate-800"><?= htmlspecialchars($_SESSION['user']['nama'] ?? 'Pengguna') ?></p>
-              <p class="truncate text-xs capitalize text-slate-500"><?= htmlspecialchars($_SESSION['user']['role'] ?? 'user') ?></p>
+              <p class="truncate text-xs capitalize text-slate-500"><?= htmlspecialchars($_SESSION['user']['role'] ?? 'pelanggan') ?></p>
             </div>
           </div>
         </div>

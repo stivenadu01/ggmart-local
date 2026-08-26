@@ -51,7 +51,7 @@ function getTransaksiList(
   // FILTER USER
   if ($user) {
     $safeUser = intval($user);
-    $conditions[] = "t.id_user = $safeUser";
+    $conditions[] = "t.id_pengguna = $safeUser";
   }
 
   //untuk summary hitung hanya yang selesai
@@ -81,9 +81,9 @@ function getTransaksiList(
 
   // DATA
   $sqlData = "
-    SELECT t.*, u.nama AS user
+    SELECT t.*, u.nama AS user, u.role AS user_role
     FROM transaksi t
-    LEFT JOIN user u ON t.id_user = u.id_user
+    LEFT JOIN pengguna u ON t.id_pengguna = u.id_pengguna
     $where
     ORDER BY t.tanggal_transaksi DESC
     LIMIT $limit OFFSET $offset
@@ -117,7 +117,7 @@ function getTransaksiList(
 function findTransaksi($kode_transaksi)
 {
   $conn = db();
-  $stmt = $conn->prepare("SELECT t.*, u.nama AS user FROM transaksi t LEFT JOIN user u ON t.id_user=u.id_user WHERE kode_transaksi = ?");
+  $stmt = $conn->prepare("SELECT t.*, u.nama AS user, u.role AS user_role FROM transaksi t LEFT JOIN pengguna u ON t.id_pengguna=u.id_pengguna WHERE kode_transaksi = ?");
   $stmt->bind_param("s", $kode_transaksi);
   $stmt->execute();
   $res = $stmt->get_result()->fetch_assoc();
@@ -128,7 +128,7 @@ function findTransaksi($kode_transaksi)
 function findTransaksiForUpdate($kode_transaksi)
 {
   $conn = db();
-  $stmt = $conn->prepare("SELECT t.*, u.nama AS user FROM transaksi t LEFT JOIN user u ON t.id_user=u.id_user WHERE t.kode_transaksi = ? FOR UPDATE");
+  $stmt = $conn->prepare("SELECT t.*, u.nama AS user, u.role AS user_role FROM transaksi t LEFT JOIN pengguna u ON t.id_pengguna=u.id_pengguna WHERE t.kode_transaksi = ? FOR UPDATE");
   $stmt->bind_param("s", $kode_transaksi);
   $stmt->execute();
   $res = $stmt->get_result()->fetch_assoc();
@@ -139,13 +139,13 @@ function findTransaksiForUpdate($kode_transaksi)
 function tambahTransaksi($data)
 {
   $conn = db();
-  $sql = "INSERT INTO transaksi (kode_transaksi, id_user, total_harga, total_pokok, status, metode_bayar)
+  $sql = "INSERT INTO transaksi (kode_transaksi, id_pengguna, total_harga, total_pokok, status, metode_bayar)
           VALUES (?, ?, ?, ?, ?, ?)";
   $stmt = $conn->prepare($sql);
   $stmt->bind_param(
     "siddss",
     $data['kode_transaksi'],
-    $data['id_user'],
+    $data['id_pengguna'],
     $data['total_harga'],
     $data['total_pokok'],
     $data['status'],

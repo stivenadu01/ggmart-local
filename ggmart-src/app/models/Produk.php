@@ -293,6 +293,7 @@ function getProdukPublic($limit = 12, $offset = 0, $search = '', $kategori = nul
       harga_jual,
       gambar,
       asal_produk,
+      stok,
       (
         (CASE WHEN asal_produk IS NOT NULL AND asal_produk != '' THEN 5000 ELSE 0 END) +
         (terjual * 5) +
@@ -334,6 +335,7 @@ function getProdukTerkait($kode_produk, $id_kategori, $limit = 24)
     harga_jual,
     gambar,
     asal_produk,
+    stok,
       (
         (CASE WHEN asal_produk IS NOT NULL AND asal_produk != '' THEN 2000 ELSE 0 END) +
         (terjual * 5) +

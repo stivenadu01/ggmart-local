@@ -1,5 +1,5 @@
 <?php
-$adminRole = $_SESSION['user']['role'] ?? 'user';
+$adminRole = $_SESSION['user']['role'] ?? 'pelanggan';
 $isAdmin = $adminRole === 'admin';
 $isPimpinan = $adminRole === 'pimpinan';
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
@@ -18,7 +18,7 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
   aria-label="Navigasi admin"
   <?= $isAdmin ? 'x-init="$store.pesananBadge.start()"' : '' ?>>
 
-  <div class="flex h-full min-h-0 flex-col">
+  <div class="flex h-dvh min-h-0 flex-col overflow-auto">
     <!-- BRAND -->
     <div class="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-4 sm:px-5">
       <a href="<?= $base ?>/admin" @click="sidebarOpen = false" class="flex min-w-0 items-center gap-3">
@@ -30,7 +30,7 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
       </a>
       <button type="button" @click="sidebarOpen = false" class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="Tutup menu">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
         </svg>
       </button>
     </div>
@@ -62,13 +62,13 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
             </a>
 
             <?php if ($isAdmin): ?>
-            <a href="<?= $base ?>/admin/kasir" class="admin-nav-link <?= adminMenuActive($base . '/admin/kasir', $currentPath, true) ?>">
-              <span class="admin-nav-icon">▤</span><span>Kasir</span>
-            </a>
-            <a href="<?= $base ?>/admin/pesanan" class="admin-nav-link <?= adminMenuActive($base . '/admin/pesanan', $currentPath, true) ?> relative">
-              <span class="admin-nav-icon">🛒</span><span>Pesanan</span>
-              <span x-show="$store.pesananBadge.total > 0" x-text="$store.pesananBadge.total" x-cloak class="admin-badge"></span>
-            </a>
+              <a href="<?= $base ?>/admin/kasir" class="admin-nav-link <?= adminMenuActive($base . '/admin/kasir', $currentPath, true) ?>">
+                <span class="admin-nav-icon">▤</span><span>Kasir</span>
+              </a>
+              <a href="<?= $base ?>/admin/pesanan" class="admin-nav-link <?= adminMenuActive($base . '/admin/pesanan', $currentPath, true) ?> relative">
+                <span class="admin-nav-icon">🛒</span><span>Pesanan</span>
+                <span x-show="$store.pesananBadge.total > 0" x-text="$store.pesananBadge.total" x-cloak class="admin-badge"></span>
+              </a>
             <?php endif; ?>
           </div>
         </section>
@@ -87,9 +87,9 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
               <span class="admin-nav-icon">▣</span><span>Stok</span>
             </a>
             <?php if ($isAdmin): ?>
-            <a href="<?= $base ?>/admin/user" class="admin-nav-link <?= adminMenuActive($base . '/admin/user', $currentPath, true) ?>">
-              <span class="admin-nav-icon">♙</span><span>User</span>
-            </a>
+              <a href="<?= $base ?>/admin/user" class="admin-nav-link <?= adminMenuActive($base . '/admin/user', $currentPath, true) ?>">
+                <span class="admin-nav-icon">♙</span><span>User</span>
+              </a>
             <?php endif; ?>
           </div>
         </section>
@@ -102,9 +102,9 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
               <span class="admin-nav-icon">▤</span><span>Riwayat Transaksi</span>
             </a>
             <?php if ($isPimpinan): ?>
-            <a href="<?= $base ?>/admin/laporan" class="admin-nav-link <?= adminMenuActive($base . '/admin/laporan', $currentPath) ?>">
-              <span class="admin-nav-icon">▥</span><span>Laporan</span>
-            </a>
+              <a href="<?= $base ?>/admin/laporan" class="admin-nav-link <?= adminMenuActive($base . '/admin/laporan', $currentPath) ?>">
+                <span class="admin-nav-icon">▥</span><span>Laporan</span>
+              </a>
             <?php endif; ?>
           </div>
         </section>
@@ -114,9 +114,9 @@ function adminMenuActive(string $path, string $currentPath, bool $exact = false)
           <p class="admin-nav-heading">Sistem</p>
           <div class="space-y-1">
             <?php if ($isAdmin): ?>
-            <a href="<?= $base ?>/admin/pengaturan" class="admin-nav-link <?= adminMenuActive($base . '/admin/pengaturan', $currentPath) ?>">
-              <span class="admin-nav-icon">⚙</span><span>Pengaturan</span>
-            </a>
+              <a href="<?= $base ?>/admin/pengaturan" class="admin-nav-link <?= adminMenuActive($base . '/admin/pengaturan', $currentPath) ?>">
+                <span class="admin-nav-icon">⚙</span><span>Pengaturan</span>
+              </a>
             <?php endif; ?>
             <a href="<?= $base ?>" class="admin-nav-link">
               <span class="admin-nav-icon">⌂</span><span>Kembali ke Beranda</span>

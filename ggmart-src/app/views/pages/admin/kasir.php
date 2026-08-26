@@ -118,7 +118,7 @@
             </div>
             <p class="mt-0.5 text-xs text-slate-500">Periksa jumlah dan total sebelum menyimpan.</p>
           </div>
-          <button type="button" @click="reset()" :disabled="keranjang.length === 0" class="shrink-0 text-xs font-semibold text-red-500 transition hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-40">
+          <button type="button" @click="reset()" :disabled="keranjang.length === 0" class="admin-action-danger admin-action-sm shrink-0 disabled:cursor-not-allowed disabled:opacity-50">
             Kosongkan
           </button>
         </div>
@@ -134,7 +134,7 @@
                     <p class="truncate text-sm font-semibold text-slate-800" x-text="item.nama_produk"></p>
                     <p class="mt-0.5 text-xs text-slate-400" x-text="utils.formatRupiah(item.harga_satuan) + ' / item'"></p>
                   </div>
-                  <button type="button" @click="hapus(i)" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Hapus produk dari keranjang">
+                  <button type="button" @click="hapus(i)" class="admin-action-icon-sm text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label="Hapus produk dari keranjang">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                       <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"></path>
                     </svg>
@@ -143,9 +143,9 @@
 
                 <div class="mt-3 flex items-center justify-between gap-3">
                   <div class="flex items-center rounded-lg border border-slate-200 bg-slate-50">
-                    <button type="button" @click="item.jumlah > 1 && (item.jumlah--, update(i))" class="h-9 w-9 text-slate-500 transition hover:bg-white hover:text-slate-800" aria-label="Kurangi jumlah">−</button>
+                    <button type="button" @click="item.jumlah > 1 && (item.jumlah--, update(i))" class="admin-action-icon-sm bg-white hover:bg-slate-50" aria-label="Kurangi jumlah">−</button>
                     <input type="number" min="1" :max="item.stok" class="h-9 w-12 border-x border-slate-200 bg-white p-0 text-center text-sm font-semibold text-slate-800 outline-none" x-model.number="item.jumlah" @input="update(i)" aria-label="Jumlah produk">
-                    <button type="button" @click="item.jumlah < item.stok && (item.jumlah++, update(i))" class="h-9 w-9 text-slate-500 transition hover:bg-white hover:text-slate-800" aria-label="Tambah jumlah">+</button>
+                    <button type="button" @click="item.jumlah < item.stok && (item.jumlah++, update(i))" class="admin-action-icon-sm bg-white hover:bg-slate-50" aria-label="Tambah jumlah">+</button>
                   </div>
                   <span class="text-sm font-bold text-slate-900" x-text="utils.formatRupiah(item.subtotal)"></span>
                 </div>
@@ -184,14 +184,14 @@
           <div class="mb-3">
             <label class="label">Metode Pembayaran</label>
             <div class="grid grid-cols-2 gap-2">
-              <button type="button" @click="metode='tunai'" :class="metode === 'tunai' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition">
+              <button type="button" @click="metode='tunai'" :class="metode === 'tunai' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="admin-action min-h-11 w-full rounded-xl border">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                   <rect x="3" y="6" width="18" height="12" rx="2"></rect>
                   <circle cx="12" cy="12" r="2.5"></circle>
                 </svg>
                 Tunai
               </button>
-              <button type="button" @click="metode='qris'" :class="metode === 'qris' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="flex min-h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition">
+              <button type="button" @click="metode='qris'" :class="metode === 'qris' ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/10' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'" class="admin-action min-h-11 w-full rounded-xl border">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                   <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM16 13h4v4h-4zM13 18h3M18 20h2" stroke-linejoin="round" stroke-linecap="round"></path>
                 </svg>

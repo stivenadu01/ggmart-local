@@ -8,8 +8,8 @@ get('/register', 'AuthController@register');
 get('/auth/verify', 'AuthController@verify');
 get('/auth/reset-password', 'AuthController@resetPassword');
 
-get('/keranjang', 'UserController@keranjang');
-get('/transaksi', 'UserController@transaksi', ['auth']);
+get('/keranjang', 'UserController@keranjang', ['role:pelanggan']);
+get('/transaksi', 'UserController@transaksi', ['role:pelanggan']);
 get('/produk', 'UserController@produk');
 get('/produk/{id}', 'UserController@produkDetail');
 

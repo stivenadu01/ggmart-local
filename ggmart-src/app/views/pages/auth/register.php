@@ -1,89 +1,82 @@
-<div class="section-center">
-  <div class="w-full max-w-6xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+<div class="auth-page">
+  <div class="auth-shell">
+    <section class="auth-brand-panel">
+      <img :src="BASE_URL + '/assets/logo.png'" alt="Logo GG-Mart" class="auth-logo">
+      <div class="max-w-md">
+        <p class="auth-brand-title">Gerakan Beli Produk Lokal</p>
+        <p class="auth-brand-text">Buat akun pelanggan untuk menyimpan keranjang dan melacak pesanan Anda.</p>
+      </div>
+    </section>
 
-    <!-- LEFT -->
-    <div class="hidden md:flex flex-center flex-col gap-6 p-10">
-      <img :src="BASE_URL + '/assets/logo.png'" alt="Logo" class="w-20 md:w-34">
-      <p class="text-2xl font-semibold leading-relaxed max-w-md">
-        Gerakan Beli Produk Lokal
-      </p>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="p-10 lg:p-14">
-      <div class="max-w-md mx-auto">
-
-        <h2 class="text-2xl font-semibold text-slate-900 text-center">
-          Buat Akun GGmart Anda
-        </h2>
-
-        <p class="mt-2 text-sm text-center text-slate-600">
-          Daftarkan akun untuk mulai berbelanja produk lokal terbaik.
-        </p>
-
-        <form x-data="registerForm()" @submit.prevent="submit" class="mt-8 space-y-5">
-
-          <!-- NAMA -->
-          <div class="form-group">
-            <label class="label">Nama Lengkap</label>
-            <input type="text" x-model="nama"
-              placeholder="Masukkan nama lengkap"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- EMAIL -->
-          <div class="form-group">
-            <label class="label">Email</label>
-            <input type="email" x-model="email"
-              placeholder="email@contoh.com"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- PASSWORD -->
-          <div class="form-group">
-            <label class="label">Kata Sandi</label>
-            <input type="password" x-model="password"
-              placeholder="Masukkan kata sandi"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- NO HP -->
-          <div class="form-group">
-            <label class="label">Nomor HP</label>
-            <input type="text" x-model="no_hp"
-              placeholder="0812xxxx"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- CONFIRM PASSWORD -->
-          <div class="form-group">
-            <label class="label">Konfirmasi Kata Sandi</label>
-            <input type="password" x-model="password_confirm"
-              placeholder="Konfirmasi kata sandi"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- SUBMIT -->
-          <button type="submit" class="btn-primary py-3">
-            Daftar
-          </button>
-
-        </form>
-
-        <!-- LOGIN LINK -->
-        <div class="mt-6 text-center text-sm text-slate-600">
-          Sudah punya akun?
-          <a :href="BASE_URL + '/login'" class="text-primary-dark font-semibold hover:underline">
-            Masuk di sini
-          </a>
+    <section class="auth-form-panel">
+      <div class="auth-form-wrap" x-data="registerForm()">
+        <div class="auth-heading">
+          <p class="auth-eyebrow">DAFTAR PELANGGAN</p>
+          <h1 class="auth-title">Buat akun GG-Mart</h1>
+          <p class="auth-description">Lengkapi data berikut untuk mulai berbelanja produk lokal.</p>
         </div>
 
-      </div>
-    </div>
+        <template x-if="success">
+          <div class="auth-success-state mb-6">
+            <div class="auth-state-icon auth-state-icon-success">✓</div>
+            <h2 class="auth-state-title">Registrasi berhasil</h2>
+            <p class="auth-state-text">Kami sudah mengirim email verifikasi. Verifikasi akun Anda sebelum masuk.</p>
+            <a :href="BASE_URL + '/login'" class="btn-primary mt-5">Ke Halaman Login</a>
+          </div>
+        </template>
 
+        <form x-show="!success" @submit.prevent="submit" class="auth-form">
+          <div class="form-group">
+            <label for="register-nama" class="label">Nama Lengkap</label>
+            <input id="register-nama" type="text" x-model.trim="nama" autocomplete="name"
+              placeholder="Contoh: Jhon Doe" class="input" required>
+            <p class="form-help">Gunakan nama yang mudah dikenali untuk pesanan Anda.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="register-email" class="label">Email</label>
+            <input id="register-email" type="email" x-model.trim="email" autocomplete="email"
+              placeholder="Contoh: jhon@email.com" class="input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="register-phone" class="label">Nomor HP</label>
+            <input id="register-phone" type="tel" x-model.trim="no_hp" autocomplete="tel"
+              placeholder="Contoh: 081234567890" class="input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="register-password" class="label">Kata Sandi</label>
+            <div class="auth-password-wrap">
+              <input id="register-password" :type="showPassword ? 'text' : 'password'" x-model="password"
+                autocomplete="new-password" placeholder="Buat kata sandi Anda" class="input pr-12" required>
+              <button type="button" class="auth-password-toggle" @click="showPassword = !showPassword">
+                <span x-text="showPassword ? 'Sembunyikan' : 'Lihat'"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-confirm" class="label">Konfirmasi Kata Sandi</label>
+            <input id="register-confirm" :type="showPassword ? 'text' : 'password'" x-model="password_confirm"
+              autocomplete="new-password" placeholder="Masukkan kembali kata sandi" class="input" required>
+          </div>
+
+          <div x-show="error" x-cloak class="auth-alert auth-alert-error" role="alert" x-text="error"></div>
+
+          <button type="submit" class="btn-primary auth-submit" :disabled="loading || !isValid">
+            <span x-text="loading ? 'Membuat akun...' : 'Daftar' "></span>
+          </button>
+        </form>
+
+        <div x-show="!success" class="auth-footer-text">
+          Sudah punya akun?
+          <a :href="BASE_URL + '/login'" class="auth-link">Masuk di sini</a>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
-
 
 <script>
   function registerForm() {
@@ -93,17 +86,22 @@
       password: '',
       password_confirm: '',
       no_hp: '',
+      showPassword: false,
+      loading: false,
+      error: '',
+      success: false,
+      get isValid() {
+        return this.nama && this.email && this.password && this.password_confirm && this.no_hp && this.password === this.password_confirm;
+      },
       async submit() {
-        if (!this.nama || !this.email || !this.password || !this.password_confirm || !this.no_hp) {
-          Alpine.store('ui').toast('Semua field harus diisi', 'error');
+        if (!this.isValid || this.loading) {
+          if (this.password && this.password_confirm && this.password !== this.password_confirm) {
+            this.error = 'Konfirmasi kata sandi tidak cocok.';
+          }
           return;
         }
-
-        if (this.password !== this.password_confirm) {
-          Alpine.store('ui').toast('Kata sandi tidak cocok', 'error');
-          return;
-        }
-
+        this.loading = true;
+        this.error = '';
         try {
           const res = await API.post('/auth/register', {
             nama: this.nama,
@@ -112,12 +110,15 @@
             no_hp: this.no_hp,
           });
           if (res.success) {
-            setTimeout(() => {
-              window.location.href = BASE_URL + '/login';
-            }, 5000);
+            this.success = true;
+            Alpine.store('ui').toast('Registrasi berhasil. Silakan verifikasi email Anda.');
+          } else {
+            this.error = res.message || 'Registrasi gagal diproses.';
           }
         } catch (error) {
-          console.log(error);
+          this.error = error.message || 'Tidak dapat menghubungi server.';
+        } finally {
+          this.loading = false;
         }
       }
     }

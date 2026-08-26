@@ -1,16 +1,16 @@
-<div class="px-d py-10 max-w-7xl mx-auto" x-data>
+<div class="mx-auto max-w-7xl px-d py-10 pb-36 md:pb-10" x-data>
 
-  <h2 class="mb-6 tracking-tight">Keranjang Belanja</h2>
+  <div class="mb-6">
+    <h2 class="tracking-tight">Keranjang Belanja</h2>
+    <p class="form-help">Periksa jumlah dan produk sebelum melanjutkan ke checkout.</p>
+  </div>
 
   <!-- BELUM LOGIN -->
   <template x-if="!$store.auth.user">
-    <div class="section-center text-center">
-      <div class="space-y-4">
-        <p class="text-gray-500">Silakan login untuk melihat keranjang</p>
-        <a :href="BASE_URL + '/login'" class="btn-primary w-auto px-6 inline-flex">
-          Login
-        </a>
-      </div>
+    <div class="user-empty">
+      <p class="font-semibold text-slate-800">Login untuk melihat keranjang</p>
+      <p class="form-help">Keranjang tersimpan di akun agar pesanan dapat diproses dan dilacak.</p>
+      <a :href="BASE_URL + '/login'" class="user-action-primary mt-4 w-auto">Login</a>
     </div>
   </template>
 
@@ -21,8 +21,11 @@
 
       <!-- EMPTY -->
       <template x-if="$store.cart.items.length === 0">
-        <div class="card text-center py-10 text-gray-500">
-          🛒 Keranjang kamu masih kosong
+        <div class="user-empty">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl" aria-hidden="true">🛒</div>
+          <p class="mt-4 font-semibold text-slate-800">Keranjang kamu masih kosong</p>
+          <p class="form-help">Pilih produk dari katalog untuk mulai berbelanja.</p>
+          <a :href="BASE_URL + '/produk'" class="user-action-primary mt-4 w-auto">Lihat Produk</a>
         </div>
       </template>
 
@@ -31,98 +34,92 @@
 
         <template x-for="item in $store.cart.items" :key="item.id_keranjang">
 
-          <div class="card flex-between gap-3 md:gap-4 hover:shadow-sm transition border-b border-gray-200">
-
-            <!-- PRODUCT INFO -->
-            <div class="flex gap-3 md:gap-4 items-center min-w-0 flex-1">
-
-              <img
-                loading="lazy"
-                :src="`${BASE_URL}/uploads${item.gambar}`"
-                class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg shrink-0">
+          <article class="user-card flex flex-col gap-4 p-3 transition hover:shadow-sm sm:flex-row sm:items-center sm:p-4">
+            <div class="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+              <button
+                type="button"
+                @click="window.location.href = BASE_URL + '/produk/' + encodeURIComponent(item.kode_produk)"
+                class="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-50 sm:h-20 sm:w-20"
+                :aria-label="'Lihat ' + item.nama_produk">
+                <img
+                  loading="lazy"
+                  :src="item.gambar ? `${BASE_URL}/uploads${item.gambar}` : `${BASE_URL}/assets/no-image.png`"
+                  :alt="item.nama_produk"
+                  class="h-full w-full object-contain">
+              </button>
 
               <div class="min-w-0 flex-1">
-                <div class="font-medium text-sm md:text-base truncate"
-                  x-text="item.nama_produk"></div>
-
-                <div class="text-xs md:text-sm text-gray-500 mt-0.5"
-                  x-text="$store.utils.formatRupiah(item.harga_jual)">
-                </div>
+                <h3 class="line-clamp-2 text-sm font-semibold text-slate-900 sm:text-base" x-text="item.nama_produk"></h3>
+                <p class="mt-1 text-sm font-semibold text-primary" x-text="$store.utils.formatRupiah(item.harga_jual)"></p>
+                <p class="mt-1 text-xs text-slate-500">
+                  Stok tersedia: <span class="font-medium" x-text="item.stok"></span>
+                </p>
               </div>
-
             </div>
 
-            <!-- QUANTITY CONTROL -->
-            <div class="flex items-center gap-1 md:gap-2 shrink-0">
-
-              <!-- MINUS -->
-              <button
-                @click="
-                  if (item.jumlah > 1) {
-                    item.jumlah--;
-                    $store.cart.update(item);
-                  }
-                "
-                class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex-center transition text-sm md:text-lg">
-                −
-              </button>
-
-              <!-- QTY -->
-              <div
-                class="w-6 md:w-10 text-center text-xs md:text-sm font-medium text-gray-700 select-none">
-                <span x-text="item.jumlah"></span>
+            <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 sm:border-0 sm:pt-0">
+              <div class="user-quantity-control" :aria-label="'Jumlah ' + item.nama_produk">
+                <button
+                  type="button"
+                  @click="if (item.jumlah > 1) { item.jumlah--; $store.cart.update(item); }"
+                  :disabled="item.jumlah <= 1"
+                  class="user-quantity-button"
+                  aria-label="Kurangi jumlah">−</button>
+                <span class="w-8 text-center text-sm font-semibold text-slate-700" x-text="item.jumlah"></span>
+                <button
+                  type="button"
+                  @click="if (item.jumlah < item.stok) { item.jumlah++; $store.cart.update(item); }"
+                  :disabled="item.jumlah >= item.stok"
+                  class="user-quantity-button"
+                  aria-label="Tambah jumlah">+</button>
               </div>
 
-              <!-- PLUS -->
-              <button
-                @click="
-                item.jumlah++;
-                $store.cart.update(item);
-                "
-                class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex-center transition text-sm md:text-lg">
-                +
-              </button>
+              <div class="min-w-24 text-right">
+                <p class="text-xs text-slate-500">Subtotal</p>
+                <p class="mt-0.5 text-sm font-semibold text-slate-900" x-text="$store.utils.formatRupiah(item.harga_jual * item.jumlah)"></p>
+              </div>
 
-              <!-- DELETE -->
               <button
+                type="button"
                 @click="$store.cart.remove(item.id_keranjang)"
-                class="ml-2 md:ml-3 text-lg md:text-2xl text-red-500 hover:text-red-600 font-light transition">
-                ✕
+                class="user-action-danger h-10 w-10 shrink-0 p-0"
+                aria-label="Hapus produk dari keranjang">
+                <span aria-hidden="true">×</span>
               </button>
             </div>
-          </div>
+          </article>
         </template>
 
       </div>
 
       <!-- TOTAL -->
-      <div class="card mt-3 flex-between flex-col md:flex-row gap-4 fixed bottom-0 left-0 w-full md:relative md:bottom-auto md:left-auto md:w-auto">
+      <div x-show="$store.cart.items.length > 0" x-cloak class="fixed bottom-0 left-0 z-40 w-full border-t border-slate-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur md:relative md:bottom-auto md:left-auto md:z-auto md:mt-3 md:rounded-2xl md:border md:p-4 md:shadow-sm">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p class="text-xs text-slate-500">Total belanja</p>
+            <p class="text-xl font-semibold text-primary" x-text="$store.utils.formatRupiah($store.cart.totalHarga)"></p>
+          </div>
 
-        <div>
-          <div class="text-xl font-medium" x-show="$store.cart.items.length > 0">
-            Total:
-            <span class="text-primary font-poppins"
-              x-text="$store.utils.formatRupiah($store.cart.totalHarga)">
-            </span>
+          <div class="grid grid-cols-2 gap-2 md:flex md:w-auto">
+            <button
+              type="button"
+              @click="$store.cart.clear()"
+              :disabled="$store.cart.items.length === 0"
+              class="user-action-danger w-full md:w-auto"
+              >
+              Hapus semua
+            </button>
+            <button
+              type="button"
+              @click="$store.cart.checkout()"
+              :disabled="$store.cart.items.length === 0 || $store.cart.checkingOut"
+              class="user-action-primary w-full md:w-auto disabled:cursor-not-allowed disabled:opacity-50"
+              >
+              <span x-text="$store.cart.checkingOut ? 'Memproses...' : 'Checkout'"></span>
+            </button>
           </div>
         </div>
-
-        <div class="flex-between w-full md:w-auto px-0 gap-2">
-          <button @click=" $store.cart.clear()"
-            :disabled="$store.cart.items.length === 0"
-            class="btn-outline-danger md:w-auto">
-            Hapus semua
-          </button>
-          <button
-            @click="$store.cart.checkout()"
-            :disabled="$store.cart.items.length === 0"
-            class="btn-primary md:w-auto">
-            Checkout
-          </button>
-        </div>
-
       </div>
-
     </div>
 
   </template>

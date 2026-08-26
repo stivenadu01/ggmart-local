@@ -1,140 +1,157 @@
-<div class="section-center">
-  <div class="w-full max-w-6xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
+<div class="auth-page">
+  <div class="auth-shell">
+    <section class="auth-brand-panel">
+      <img :src="BASE_URL + '/assets/logo.png'" alt="Logo GG-Mart" class="auth-logo">
+      <div class="max-w-md">
+        <p class="auth-brand-title">Gerakan Beli Produk Lokal</p>
+        <p class="auth-brand-text">Masuk untuk melanjutkan belanja, menyimpan keranjang, dan melihat transaksi Anda.</p>
+      </div>
+    </section>
 
-    <!-- LEFT -->
-    <div class="hidden md:flex flex-center flex-col gap-6 p-10">
-      <img :src="BASE_URL + '/assets/logo.png'" alt="Logo" class="w-20 md:w-34">
-      <p class="text-2xl font-semibold leading-relaxed max-w-md">
-        Gerakan Beli Produk Lokal
-      </p>
-    </div>
+    <section class="auth-form-panel">
+      <div class="auth-form-wrap" x-data="loginForm()">
+        <div class="auth-heading">
+          <p class="auth-eyebrow">GG-MART</p>
+          <h1 class="auth-title">Masuk ke akun Anda</h1>
+          <p class="auth-description">Gunakan email dan kata sandi yang terdaftar untuk melanjutkan.</p>
+        </div>
 
-    <!-- RIGHT -->
-    <div class="p-10 lg:p-14">
-      <div class="max-w-md mx-auto">
-
-        <h2 class="text-2xl font-semibold text-slate-900 text-center">
-          Masuk ke akun GGmart Anda
-        </h2>
-
-        <p class="mt-2 text-sm text-center text-slate-600">
-          Masukkan email dan kata sandi untuk melanjutkan berbelanja.
-        </p>
-
-        <form x-data="loginForm()" @submit.prevent="submit" class="mt-8 space-y-5">
-
-          <!-- EMAIL -->
+        <form @submit.prevent="submit" class="auth-form">
           <div class="form-group">
-            <label class="label">Email</label>
-            <input type="email" x-model="email" placeholder="email@contoh.com"
-              class="input py-3 px-4" />
+            <label for="login-email" class="label">Email</label>
+            <input id="login-email" type="email" x-model.trim="email" autocomplete="email"
+              placeholder="Contoh: jhon@email.com" class="input" required>
+            <p class="form-help">Gunakan email yang Anda daftarkan di GG-Mart.</p>
           </div>
 
-          <!-- PASSWORD -->
           <div class="form-group">
-            <label class="label">Kata Sandi</label>
-            <input type="password" x-model="password" placeholder="Masukkan kata sandi"
-              class="input py-3 px-4" />
-          </div>
-
-          <!-- FORGOT -->
-          <div class="flex-between text-sm">
-            <button type="button" @click="forgotModal = true"
-              class="text-primary-dark hover:underline">
-              Lupa kata sandi??
-            </button>
-          </div>
-
-          <!-- MODAL -->
-          <div x-show="forgotModal" x-cloak class="modal-backdrop">
-
-            <div @click.away="forgotModal = false" class="modal-box">
-
-              <h3 class="text-lg font-medium">Reset Kata Sandi</h3>
-
-              <p class="text-sm text-slate-600 mt-1">
-                Masukkan email Anda untuk menerima instruksi reset.
-              </p>
-
-              <div class="mt-4 form-group">
-                <label class="label">Email</label>
-                <input type="email" x-model="forgotEmail"
-                  placeholder="email@contoh.com"
-                  class="input py-3 px-4" />
-              </div>
-
-              <div class="mt-5 flex-end gap-2">
-                <button type="button" @click="forgotModal = false"
-                  class="btn-secondary px-4 py-2">
-                  Batal
-                </button>
-
-                <button type="button" @click="submitForgot"
-                  class="btn-primary px-4 py-2">
-                  <span>Kirim</span>
-                </button>
-              </div>
-
+            <label for="login-password" class="label">Kata Sandi</label>
+            <div class="auth-password-wrap">
+              <input id="login-password" :type="showPassword ? 'text' : 'password'" x-model="password"
+                autocomplete="current-password" placeholder="Masukkan kata sandi Anda" class="input pr-12" required>
+              <button type="button" class="auth-password-toggle" @click="showPassword = !showPassword"
+                :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'">
+                <span x-text="showPassword ? 'Sembunyikan' : 'Lihat'"></span>
+              </button>
             </div>
           </div>
 
-          <!-- SUBMIT -->
-          <button type="submit" class="btn-primary py-3" :disabled="(!email || !password)">
-            Masuk
-          </button>
+          <div class="flex justify-end">
+            <button type="button" class="auth-link" @click="forgotModal = true; forgotEmail = email; forgotError = ''; forgotSuccess = false">
+              Lupa kata sandi?
+            </button>
+          </div>
 
+          <div x-show="error" x-cloak class="auth-alert auth-alert-error" role="alert" x-text="error"></div>
+
+          <button type="submit" class="btn-primary auth-submit" :disabled="loading || !email || !password">
+            <span x-text="loading ? 'Memeriksa akun...' : 'Masuk'"></span>
+          </button>
         </form>
 
-        <!-- REGISTER -->
-        <div class="mt-6 text-center text-sm text-slate-600">
+        <div class="auth-footer-text">
           Belum punya akun?
-          <a :href="BASE_URL + '/register'" class="text-primary-dark font-semibold hover:underline">
-            Daftar sekarang
-          </a>
+          <a :href="BASE_URL + '/register'" class="auth-link">Daftar sekarang</a>
         </div>
 
-      </div>
-    </div>
+        <div x-show="forgotModal" x-cloak class="modal-backdrop" @keydown.escape.window="forgotModal = false">
+          <div class="modal-box" @click.outside="forgotModal = false">
+            <template x-if="!forgotSuccess">
+              <div>
+                <h2 class="auth-modal-title">Lupa kata sandi?</h2>
+                <p class="auth-modal-text">Masukkan email akun Anda. Jika email ditemukan, instruksi untuk membuat kata sandi baru akan dikirim.</p>
 
+                <div class="form-group mt-5">
+                  <label for="forgot-email" class="label">Email</label>
+                  <input id="forgot-email" type="email" x-model.trim="forgotEmail" autocomplete="email"
+                    placeholder="Contoh: jhon@email.com" class="input" required>
+                </div>
+
+                <div x-show="forgotError" x-cloak class="auth-alert auth-alert-error mt-4" role="alert" x-text="forgotError"></div>
+
+                <div class="auth-modal-actions">
+                  <button type="button" class="btn-secondary" @click="forgotModal = false" :disabled="forgotLoading">Batal</button>
+                  <button type="button" class="btn-primary" @click="submitForgot" :disabled="forgotLoading || !forgotEmail">
+                    <span x-text="forgotLoading ? 'Mengirim...' : 'Kirim Instruksi'"></span>
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <template x-if="forgotSuccess">
+              <div class="auth-success-state">
+                <div class="auth-state-icon auth-state-icon-success">✓</div>
+                <h2 class="auth-modal-title">Instruksi terkirim</h2>
+                <p class="auth-modal-text">Periksa email Anda untuk melanjutkan proses reset kata sandi.</p>
+                <button type="button" class="btn-primary mt-5" @click="forgotModal = false">Tutup</button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
-
 
 <script>
   function loginForm() {
     return {
       email: '',
       password: '',
+      showPassword: false,
+      loading: false,
+      error: '',
       forgotModal: false,
       forgotEmail: '',
+      forgotLoading: false,
+      forgotError: '',
+      forgotSuccess: false,
 
       async submitForgot() {
+        if (!this.forgotEmail || this.forgotLoading) return;
+        this.forgotLoading = true;
+        this.forgotError = '';
         try {
           const res = await API.post('/auth/request-reset', {
-            email: this.forgotEmail,
+            email: this.forgotEmail
           });
           if (res.success) {
-            this.forgotModal = false;
+            this.forgotSuccess = true;
+          } else {
+            this.forgotError = res.message || 'Permintaan reset gagal diproses.';
           }
         } catch (error) {
-          console.log(error);
+          this.forgotError = error.message || 'Tidak dapat menghubungi server.';
+        } finally {
+          this.forgotLoading = false;
         }
       },
 
       async submit() {
+        if (!this.email || !this.password || this.loading) return;
+        this.loading = true;
+        this.error = '';
         try {
-          if (!this.email || !this.password) return;
           const res = await API.post('/auth/login', {
             email: this.email,
             password: this.password,
           });
-          if (res.success) {
-            setTimeout(() => {
-              window.location.href = BASE_URL;
-            }, 1500);
+
+          if (!res.success) {
+            this.error = res.message || 'Email atau kata sandi tidak valid.';
+            return;
           }
+
+          Alpine.store('ui').toast('Login berhasil.');
+          const role = res.data?.role || 'pelanggan';
+          const destination = ['admin', 'pimpinan'].includes(role) ? '/admin' : '/';
+          setTimeout(() => {
+            window.location.href = BASE_URL + destination;
+          }, 500);
         } catch (error) {
-          console.log(error);
+          this.error = error.message || 'Login gagal. Silakan coba lagi.';
+        } finally {
+          this.loading = false;
         }
       }
     }

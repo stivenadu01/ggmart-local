@@ -10,7 +10,7 @@
       </p>
     </div>
 
-    <button @click="load()" type="button" class="btn-secondary w-full sm:w-auto">
+    <button @click="load()" type="button" class="admin-action-secondary w-full sm:w-auto">
       <span>↻</span>
       <span>Refresh</span>
     </button>
@@ -46,7 +46,7 @@
         x-cloak
         @click="search=''; metode=''; pagination.page=1; load()"
         type="button"
-        class="btn-outline w-full lg:w-auto">
+        class="admin-action-secondary w-full lg:w-auto">
         Reset
       </button>
     </div>
@@ -127,7 +127,7 @@
 
               <td>
                 <div class="flex justify-end gap-2">
-                  <button @click="detail(item.kode_transaksi)" type="button" class="btn-outline-primary px-3 py-2 text-xs">Detail</button>
+                  <button @click="detail(item.kode_transaksi)" type="button" class="admin-action-secondary admin-action-sm">Detail</button>
                   <button
                     x-show="item.status === 'pending' || item.status === 'diproses'"
                     @click="item.status === 'pending' ? proses(item.kode_transaksi) : konfirmasi(item.kode_transaksi)"
@@ -135,7 +135,7 @@
                     class="btn-primary px-3 py-2 text-xs"
                     x-text="item.status === 'pending' ? 'Proses' : 'Konfirmasi'">
                   </button>
-                  <button @click="batal(item.kode_transaksi)" type="button" class="btn-outline-danger px-3 py-2 text-xs">Batal</button>
+                  <button @click="batal(item.kode_transaksi)" type="button" class="admin-action-danger admin-action-sm">Batal</button>
                 </div>
               </td>
             </tr>
@@ -197,14 +197,14 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button @click="detail(item.kode_transaksi)" type="button" class="btn-outline-primary">Detail</button>
+          <button @click="detail(item.kode_transaksi)" type="button" class="admin-action-secondary admin-action-sm">Detail</button>
           <button
             @click="item.status === 'pending' ? proses(item.kode_transaksi) : konfirmasi(item.kode_transaksi)"
             type="button"
             class="btn-primary"
             x-text="item.status === 'pending' ? 'Proses' : 'Konfirmasi'">
           </button>
-          <button @click="batal(item.kode_transaksi)" type="button" class="btn-outline-danger col-span-2">Batalkan Pesanan</button>
+          <button @click="batal(item.kode_transaksi)" type="button" class="admin-action-danger col-span-2">Batalkan Pesanan</button>
         </div>
       </article>
     </template>
@@ -226,7 +226,7 @@
         @click="pagination.page--; load()"
         :disabled="pagination.page==1"
         type="button"
-        class="btn-outline px-3"
+        class="admin-page-button"
         aria-label="Halaman sebelumnya">←</button>
 
       <span class="min-w-24 text-center text-sm text-slate-500">
@@ -238,7 +238,7 @@
         @click="pagination.page++; load()"
         :disabled="pagination.page==pagination.total_pages"
         type="button"
-        class="btn-outline px-3"
+        class="admin-page-button"
         aria-label="Halaman berikutnya">→</button>
     </div>
   </div>
@@ -302,9 +302,7 @@
         const ok = await Alpine.store('ui').confirm('Proses pesanan ini?')
         if (!ok) return
         try {
-          await API.post('/transaksi/proses', {
-            kode_transaksi: kode
-          })
+          await API.post('/transaksi/proses', { kode_transaksi: kode })
           Alpine.store('ui').toast('Pesanan diproses')
           await this.load()
         } catch (err) {
@@ -316,9 +314,7 @@
         const ok = await Alpine.store('ui').confirm('Konfirmasi pesanan ini?')
         if (!ok) return
         try {
-          await API.post('/transaksi/konfirmasi', {
-            kode_transaksi: kode
-          })
+          await API.post('/transaksi/konfirmasi', { kode_transaksi: kode })
           Alpine.store('ui').toast('Pesanan dikonfirmasi')
           await this.load()
         } catch (err) {
@@ -330,9 +326,7 @@
         const ok = await Alpine.store('ui').confirm('Batalkan pesanan ini?')
         if (!ok) return
         try {
-          await API.post('/transaksi/batal', {
-            kode_transaksi: kode
-          })
+          await API.post('/transaksi/batal', { kode_transaksi: kode })
           Alpine.store('ui').toast('Pesanan dibatalkan')
           await this.load()
         } catch (err) {

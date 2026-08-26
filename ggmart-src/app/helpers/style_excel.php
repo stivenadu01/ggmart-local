@@ -85,3 +85,30 @@ function applyStyle($sheet, string $range, array $classes)
 
   $sheet->getStyle($range)->applyFromArray($finalStyle);
 }
+
+/**
+ * Menambahkan blok tanda tangan pimpinan di bagian akhir laporan.
+ * Tidak mengubah data/rumus laporan; hanya menambahkan informasi penutup.
+ */
+function appendReportSignature($sheet, int &$row, string $mergeCol)
+{
+  $namaPimpinan = trim($_SESSION['user']['nama'] ?? '');
+  if ($namaPimpinan === '') {
+    $namaPimpinan = 'Pimpinan';
+  }
+
+  $row += 3;
+  $sheet->setCellValue("A$row", 'Kupang, ' . date_indo('j F Y'));
+  $sheet->mergeCells("A$row:$mergeCol$row");
+  applyStyle($sheet, "A$row:$mergeCol$row", ['right']);
+
+  $row++;
+  $sheet->setCellValue("A$row", 'Mengetahui,');
+  $sheet->mergeCells("A$row:$mergeCol$row");
+  applyStyle($sheet, "A$row:$mergeCol$row", ['right']);
+
+  $row += 5;
+  $sheet->setCellValue("A$row", "(  $namaPimpinan  )");
+  $sheet->mergeCells("A$row:$mergeCol$row");
+  applyStyle($sheet, "A$row:$mergeCol$row", ['bold', 'right']);
+}
