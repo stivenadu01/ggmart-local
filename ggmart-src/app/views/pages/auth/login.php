@@ -19,8 +19,7 @@
         <form @submit.prevent="submit" class="auth-form">
           <div class="form-group">
             <label for="login-email" class="label">Email</label>
-            <input id="login-email" type="email" x-model.trim="email" autocomplete="email"
-              placeholder="Contoh: jhon@email.com" class="input" required>
+            <input id="login-email" type="email" x-model.trim="email" autocomplete="email" class="input" required>
             <p class="form-help">Gunakan email yang Anda daftarkan di GG-Mart.</p>
           </div>
 
@@ -28,7 +27,7 @@
             <label for="login-password" class="label">Kata Sandi</label>
             <div class="auth-password-wrap">
               <input id="login-password" :type="showPassword ? 'text' : 'password'" x-model="password"
-                autocomplete="current-password" placeholder="Masukkan kata sandi Anda" class="input pr-12" required>
+                autocomplete="current-password" class="input pr-12" required>
               <button type="button" class="auth-password-toggle" @click="showPassword = !showPassword"
                 :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'">
                 <span x-text="showPassword ? 'Sembunyikan' : 'Lihat'"></span>
@@ -64,7 +63,7 @@
                 <div class="form-group mt-5">
                   <label for="forgot-email" class="label">Email</label>
                   <input id="forgot-email" type="email" x-model.trim="forgotEmail" autocomplete="email"
-                    placeholder="Contoh: jhon@email.com" class="input" required>
+                    class="input" required>
                 </div>
 
                 <div x-show="forgotError" x-cloak class="auth-alert auth-alert-error mt-4" role="alert" x-text="forgotError"></div>

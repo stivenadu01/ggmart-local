@@ -34,7 +34,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" aria-label="Memuat produk unggulan">
         <template x-for="i in 3" :key="i">
           <div class="animate-pulse space-y-4">
-            <div class="aspect-[4/3] rounded-xl bg-gray-100"></div>
+            <div class="aspect-4/3 rounded-xl bg-gray-100"></div>
             <div class="mx-auto h-6 w-2/3 rounded bg-gray-100"></div>
             <div class="mx-auto h-4 w-5/6 rounded bg-gray-100"></div>
           </div>
