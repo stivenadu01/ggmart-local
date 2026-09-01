@@ -33,13 +33,13 @@
 
   <?php include __DIR__ . '/../partials/toast.php'; ?>
 
-  <footer class="mt-16 border-t border-slate-200 bg-white sm:mt-20">
+  <footer class="mt-16 border-t border-slate-200 bg-white sm:mt-20" x-data>
     <div class="user-container py-10 sm:py-12">
       <div class="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
 
         <div class="md:col-span-1">
           <div class="mb-3 flex items-center gap-2 font-poppins text-lg font-bold text-slate-900">
-            <img :src="BASE_URL + '/assets/logo.png'" class="h-7 w-7 object-contain" alt="Logo GG MART">
+            <img src="<?= BASE_URL ?>/assets/logo.png" class="h-7 w-7 object-contain" alt="Logo GG MART">
             <span>GG MART</span>
           </div>
           <p class="max-w-sm text-sm leading-6 text-slate-500">
@@ -58,9 +58,9 @@
         <div>
           <h3 class="mb-3 text-sm font-bold text-slate-900">Kontak</h3>
           <ul class="space-y-1 text-sm text-slate-500">
-            <li class="px-3 py-2.5">Email: ggmart@gmit.or.id</li>
+            <li class="px-3 py-2.5">Email: ggmart@gmail.com</li>
             <li>
-              <a :href="`https://wa.me/${NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`" class="user-menu-item">
+              <a :href="`https://wa.me/${NOMOR_WA}?text=Halo%20Admin%20GGMart%2C%20saya%20ingin%20bertanya...`" class="user-menu-item" target="_blank">
                 WhatsApp Admin
               </a>
             </li>
