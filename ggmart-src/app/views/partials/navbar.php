@@ -134,7 +134,7 @@
     x-show="mobileMenu"
     x-cloak
     x-transition.opacity
-    class="fixed inset-0 z-[60] overflow-y-auto bg-white md:hidden">
+    class="fixed inset-0 z-60 overflow-y-auto bg-white md:hidden">
     <div class="user-container py-5">
       <div class="flex items-center justify-between">
         <a :href="BASE_URL" @click="mobileMenu = false" class="flex items-center gap-2 font-poppins text-lg font-bold text-slate-900">

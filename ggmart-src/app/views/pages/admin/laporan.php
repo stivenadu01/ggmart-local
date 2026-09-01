@@ -1,11 +1,13 @@
-<div x-data="laporanPage()" x-init="fetchProduk()" class="space-y-6">
+<div x-data="laporanPage()" x-init="fetchProduk()" class="admin-page space-y-6 p-4 sm:p-6 lg:p-8">
   <!-- HEADER -->
   <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div>
         <div class="mb-2 flex items-center gap-2">
           <span class="status-success">
-            <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.86-9.86a.75.75 0 0 0-1.06-1.06L9 10.88 7.2 9.08a.75.75 0 0 0-1.06 1.06l2.33 2.33a.75.75 0 0 0 1.06 0l4.33-4.33Z" clip-rule="evenodd" /></svg>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.86-9.86a.75.75 0 0 0-1.06-1.06L9 10.88 7.2 9.08a.75.75 0 0 0-1.06 1.06l2.33 2.33a.75.75 0 0 0 1.06 0l4.33-4.33Z" clip-rule="evenodd" />
+            </svg>
             Laporan untuk Pimpinan
           </span>
         </div>
@@ -34,7 +36,10 @@
         :class="jenis === 'transaksi' ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-100' : 'border-slate-200 bg-white hover:border-emerald-300 hover:bg-slate-50'"
         class="w-full rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+            <path d="M8 8h8M8 12h8M8 16h5" />
+          </svg>
         </span>
         <span class="mt-3 block font-semibold text-slate-900">Laporan Transaksi</span>
         <span class="mt-1 block text-xs leading-5 text-slate-500">Rekap transaksi selesai berdasarkan harian, bulanan, atau tahunan.</span>
@@ -44,7 +49,10 @@
         :class="jenis === 'mutasi-stok' ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-100' : 'border-slate-200 bg-white hover:border-emerald-300 hover:bg-slate-50'"
         class="w-full rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
         <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/><path d="M5 8v8M19 8v8"/></svg>
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" />
+            <path d="M5 8v8M19 8v8" />
+          </svg>
         </span>
         <span class="mt-3 block font-semibold text-slate-900">Laporan Mutasi Stok</span>
         <span class="mt-1 block text-xs leading-5 text-slate-500">Rincian stok masuk dan keluar berdasarkan produk dan periode.</span>
@@ -158,7 +166,10 @@
     <div class="mt-6 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
       <div class="flex items-start gap-3">
         <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 8v4l3 2" />
+            <circle cx="12" cy="12" r="9" />
+          </svg>
         </span>
         <div class="min-w-0">
           <p class="text-sm font-semibold text-slate-900">Ringkasan laporan</p>
@@ -176,13 +187,19 @@
       <button type="button" @click="cetakLaporan()" :disabled="loading" class="admin-action-primary w-full sm:w-auto">
         <template x-if="loading">
           <span class="flex items-center gap-2">
-            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".3" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3"/></svg>
+            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".3" stroke-width="3" />
+              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" />
+            </svg>
             Menyiapkan laporan...
           </span>
         </template>
         <template x-if="!loading">
           <span class="flex items-center gap-2">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 20h14"/></svg>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
+              <path d="M5 20h14" />
+            </svg>
             Export Excel
           </span>
         </template>
@@ -193,7 +210,10 @@
   <!-- CATATAN -->
   <section class="rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-5">
     <div class="flex items-start gap-3">
-      <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 9v4m0 4h.01"/><path d="m10.3 4.6-7.5 13A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.7-3l-7.5-13a2 2 0 0 0-3.4 0Z"/></svg>
+      <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M12 9v4m0 4h.01" />
+        <path d="m10.3 4.6-7.5 13A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.7-3l-7.5-13a2 2 0 0 0-3.4 0Z" />
+      </svg>
       <div>
         <p class="text-sm font-semibold text-amber-900">Catatan laporan</p>
         <p class="mt-1 text-sm leading-6 text-amber-800">Laporan menggunakan data yang tersimpan di sistem GG-Mart. Pastikan transaksi yang ingin dilaporkan sudah memiliki status selesai.</p>
@@ -304,7 +324,9 @@
           Alpine.store('ui').toast(err.message || 'Gagal membuat laporan.', 'error');
           console.error(err);
         } finally {
-          window.setTimeout(() => { this.loading = false; }, 800);
+          window.setTimeout(() => {
+            this.loading = false;
+          }, 800);
         }
       }
     }

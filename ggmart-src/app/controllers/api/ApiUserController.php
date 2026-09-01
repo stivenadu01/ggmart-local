@@ -83,7 +83,7 @@ class ApiUserController
       }
 
       if (empty($input['role'])) $input['role'] = 'pelanggan';
-      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan'], true)) {
+      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan', 'kasir'], true)) {
         throw new Exception('Role pengguna tidak valid.', 422);
       }
 
@@ -122,7 +122,7 @@ class ApiUserController
       if ($isAdmin && empty($input['role'])) {
         throw new Exception('Role wajib diisi.', 422);
       }
-      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan'], true)) {
+      if (!in_array($input['role'], ['admin', 'pimpinan', 'pelanggan', 'kasir'], true)) {
         throw new Exception('Role pengguna tidak valid.', 422);
       }
 

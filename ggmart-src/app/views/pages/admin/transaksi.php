@@ -1,4 +1,4 @@
-<div class="admin-page space-y-5" x-data="riwayatPage()">
+<div class="admin-page space-y-6 p-4 sm:p-6" x-data="riwayatPage()">
 
   <!-- HEADER -->
   <header class="admin-page-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

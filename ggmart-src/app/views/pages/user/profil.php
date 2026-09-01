@@ -120,7 +120,12 @@
       },
 
       get roleLabel() {
-        const roles = { pelanggan: 'Pelanggan', admin: 'Admin', pimpinan: 'Pimpinan' }
+        const roles = {
+          pelanggan: 'Pelanggan',
+          admin: 'Admin',
+          kasir: 'Kasir',
+          pimpinan: 'Pimpinan'
+        }
         return roles[this.user.role] || this.user.role || 'Pelanggan'
       },
 
@@ -166,7 +171,9 @@
           if (!res?.success) throw new Error(res?.message || 'Profil gagal diperbarui.')
 
           await Alpine.store('auth').refresh()
-          this.user = { ...Alpine.store('auth').user }
+          this.user = {
+            ...Alpine.store('auth').user
+          }
           this.editing = false
           this.resetForm()
           Alpine.store('ui').toast(res.message || 'Profil berhasil diperbarui.')

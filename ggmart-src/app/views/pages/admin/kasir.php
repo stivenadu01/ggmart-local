@@ -1,25 +1,4 @@
-<div class="space-y-5 p-4 sm:p-5 lg:p-7" x-data="kasirPage()">
-
-  <!-- PAGE HEADER -->
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div class="min-w-0">
-      <div class="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
-        <span>Penjualan</span>
-        <span aria-hidden="true">•</span>
-        <span>Kasir</span>
-      </div>
-      <h1 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">Kasir</h1>
-      <p class="mt-1 text-sm text-slate-500">Buat transaksi penjualan dengan cepat dan akurat.</p>
-    </div>
-
-    <div class="hidden items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 shadow-sm md:flex">
-      <kbd class="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono font-semibold text-slate-600">Ctrl</kbd>
-      <span>+</span>
-      <kbd class="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono font-semibold text-slate-600">K</kbd>
-      <span>untuk cari produk</span>
-    </div>
-  </div>
-
+<div x-data="kasirPage()">
   <div class="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.85fr)]">
 
     <!-- PRODUK -->

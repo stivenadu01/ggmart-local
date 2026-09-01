@@ -7,10 +7,24 @@ document.addEventListener('alpine:init', () => {
     async logout() {
       const ok = await Alpine.store('ui').confirm("Yakin ingin logout?");
       if (!ok) return;
-      const res = await API.post('/auth/logout');
-      if (res.success) {
-        Alpine.store('ui').toast(res.message);
-        window.location.href = '/login';
+
+      try {
+        const base = window.BASE_URL || '';
+        const res = await fetch(base + '/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin'
+        });
+
+        const payload = await res.json().catch(() => ({}));
+        if (payload.message) {
+          Alpine.store('ui').toast(payload.message, payload.success ? 'success' : 'error');
+        }
+      } catch (error) {
+        console.error('Logout failed:', error);
+      } finally {
+        this.user = null;
+        window.location.assign((window.BASE_URL || '') + '/login');
       }
     },
 

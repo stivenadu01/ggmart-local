@@ -9,9 +9,11 @@
       <h1 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">Kelola Produk</h1>
       <p class="mt-1 text-sm text-slate-500">Kelola informasi produk, harga, kategori, stok, dan penjualan.</p>
     </div>
-    <a href="<?= BASE_URL ?>/admin/produk/form" class="btn-primary w-full sm:w-auto">
-      <span class="mr-1.5">+</span> Tambah Produk
-    </a>
+    <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+      <a href="<?= BASE_URL ?>/admin/produk/form" class="btn-primary w-full sm:w-auto">
+        <span class="mr-1.5">+</span> Tambah Produk
+      </a>
+    <?php endif; ?>
   </div>
 
   <!-- FILTER -->
@@ -77,7 +79,9 @@
             <th class="min-w-72">Produk</th>
             <th class="min-w-48">Harga & Stok</th>
             <th class="min-w-56">Deskripsi</th>
-            <th class="w-40 text-right">Aksi</th>
+            <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+              <th class="w-40 text-right">Aksi</th>
+            <?php endif; ?>
           </tr>
         </thead>
         <tbody>
@@ -130,12 +134,14 @@
               <td>
                 <p class="line-clamp-3 text-sm leading-6 text-slate-600" :title="item.deskripsi || '-'" x-text="item.deskripsi || 'Tidak ada deskripsi.'"></p>
               </td>
-              <td>
-                <div class="flex flex-wrap justify-end gap-2">
-                  <a :href="BASE_URL + '/admin/produk/form?k=' + encodeURIComponent(item.kode_produk)" class="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50">Edit</a>
-                  <button type="button" @click="hapus(item.kode_produk)" class="rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Hapus</button>
-                </div>
-              </td>
+              <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+                <td>
+                  <div class="flex flex-wrap justify-end gap-2">
+                    <a :href="BASE_URL + '/admin/produk/form?k=' + encodeURIComponent(item.kode_produk)" class="rounded-lg px-3 py-2 text-sm font-semibold text-emerald-600 hover:bg-emerald-50">Edit</a>
+                    <button type="button" @click="hapus(item.kode_produk)" class="rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Hapus</button>
+                  </div>
+                </td>
+              <?php endif; ?>
             </tr>
           </template>
         </tbody>
