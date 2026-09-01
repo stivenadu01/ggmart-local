@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS `pengguna` (
   `no_hp` varchar(15) DEFAULT NULL,
   `alamat` varchar(255) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('pelanggan','admin','pimpinan') NOT NULL,
+  `role` enum('pelanggan','admin','kasir','pimpinan') NOT NULL,
   `tanggal_dibuat` datetime DEFAULT CURRENT_TIMESTAMP,
   `is_verified` tinyint(1) DEFAULT '0',
   `verify_token` varchar(255) DEFAULT NULL,

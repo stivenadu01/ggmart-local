@@ -1,4 +1,4 @@
-<div class="admin-page space-y-5" x-data="transaksiDetailPage()">
+<div class="admin-page space-y-6 p-4 sm:p-6" x-data="transaksiDetailPage()">
 
   <!-- HEADER -->
   <header class="admin-page-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -161,37 +161,39 @@
         </section>
 
         <!-- ACTIONS -->
-        <template x-if="trx.status !== 'dibatalkan'">
-          <section class="card p-5">
-            <h2 class="font-semibold text-slate-900">Aksi transaksi</h2>
-            <p class="form-help">Pilih tindakan sesuai status transaksi saat ini.</p>
+        <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+          <template x-if="trx.status !== 'dibatalkan'">
+            <section class="card p-5">
+              <h2 class="font-semibold text-slate-900">Aksi transaksi</h2>
+              <p class="form-help">Pilih tindakan sesuai status transaksi saat ini.</p>
 
-            <div class="mt-4 space-y-2">
-              <template x-if="trx.status === 'pending'">
-                <button type="button" class="admin-action-primary w-full" @click="proses()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
-                  <span x-text="processing ? 'Memproses...' : 'Proses Pesanan'"></span>
+              <div class="mt-4 space-y-2">
+                <template x-if="trx.status === 'pending'">
+                  <button type="button" class="admin-action-primary w-full" @click="proses()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
+                    <span x-text="processing ? 'Memproses...' : 'Proses Pesanan'"></span>
+                  </button>
+                </template>
+
+                <template x-if="trx.status === 'diproses'">
+                  <button type="button" class="admin-action-primary w-full" @click="konfirmasi()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
+                    <span x-text="processing ? 'Mengonfirmasi...' : 'Konfirmasi Pesanan'"></span>
+                  </button>
+                </template>
+
+                <button type="button" @click="batal()" :disabled="processing" class="admin-action-danger w-full" :class="{'cursor-not-allowed opacity-60': processing}">
+                  Batalkan Transaksi
                 </button>
-              </template>
+              </div>
+            </section>
+          </template>
 
-              <template x-if="trx.status === 'diproses'">
-                <button type="button" class="admin-action-primary w-full" @click="konfirmasi()" :disabled="processing" :class="{'cursor-not-allowed opacity-60': processing}">
-                  <span x-text="processing ? 'Mengonfirmasi...' : 'Konfirmasi Pesanan'"></span>
-                </button>
-              </template>
-
-              <button type="button" @click="batal()" :disabled="processing" class="admin-action-danger w-full" :class="{'cursor-not-allowed opacity-60': processing}">
-                Batalkan Transaksi
-              </button>
-            </div>
-          </section>
-        </template>
-
-        <template x-if="trx.status === 'dibatalkan'">
-          <section class="rounded-2xl border border-red-200 bg-red-50 p-5">
-            <p class="font-semibold text-red-800">Transaksi dibatalkan</p>
-            <p class="mt-1 text-sm leading-5 text-red-700">Tidak ada aksi lanjutan yang tersedia untuk transaksi ini.</p>
-          </section>
-        </template>
+          <template x-if="trx.status === 'dibatalkan'">
+            <section class="rounded-2xl border border-red-200 bg-red-50 p-5">
+              <p class="font-semibold text-red-800">Transaksi dibatalkan</p>
+              <p class="mt-1 text-sm leading-5 text-red-700">Tidak ada aksi lanjutan yang tersedia untuk transaksi ini.</p>
+            </section>
+          </template>
+        <?php endif; ?>
       </aside>
     </div>
   </template>
@@ -252,7 +254,9 @@
         if (!ok) return
         this.processing = true
         try {
-          const res = await API.post('/transaksi/proses', { kode_transaksi: this.trx.kode_transaksi })
+          const res = await API.post('/transaksi/proses', {
+            kode_transaksi: this.trx.kode_transaksi
+          })
           if (!res.success) throw new Error(res.message || 'Gagal memproses pesanan')
           Alpine.store('ui').toast('Pesanan diproses')
           await this.load()
@@ -269,7 +273,9 @@
         if (!ok) return
         this.processing = true
         try {
-          const res = await API.post('/transaksi/konfirmasi', { kode_transaksi: this.trx.kode_transaksi })
+          const res = await API.post('/transaksi/konfirmasi', {
+            kode_transaksi: this.trx.kode_transaksi
+          })
           if (!res.success) throw new Error(res.message || 'Gagal mengonfirmasi pesanan')
           Alpine.store('ui').toast('Pesanan dikonfirmasi')
           await this.load()
@@ -287,7 +293,9 @@
         if (!ok) return
         this.processing = true
         try {
-          const res = await API.post('/transaksi/batal', { kode_transaksi: this.trx.kode_transaksi })
+          const res = await API.post('/transaksi/batal', {
+            kode_transaksi: this.trx.kode_transaksi
+          })
           if (!res.success) throw new Error(res.message || 'Gagal membatalkan transaksi')
           Alpine.store('ui').toast('Transaksi dibatalkan')
           await this.load()

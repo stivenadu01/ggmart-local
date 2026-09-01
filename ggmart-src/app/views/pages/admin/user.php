@@ -25,6 +25,7 @@
           <option value="">Semua role</option>
           <option value="pelanggan">Pelanggan</option>
           <option value="admin">Admin</option>
+          <option value="kasir">Kasir</option>
           <option value="pimpinan">Pimpinan</option>
         </select>
       </div>
@@ -66,10 +67,19 @@
         </thead>
         <tbody>
           <template x-if="loading">
-            <tr><td colspan="7" class="py-12 text-center text-sm text-slate-500">Memuat data pengguna...</td></tr>
+            <tr>
+              <td colspan="7" class="py-12 text-center text-sm text-slate-500">Memuat data pengguna...</td>
+            </tr>
           </template>
           <template x-if="!loading && !error && user.length === 0">
-            <tr><td colspan="7" class="py-12 text-center"><div class="mx-auto max-w-sm"><p class="font-semibold text-slate-700">Belum ada pengguna yang sesuai</p><p class="mt-1 text-sm text-slate-500">Coba ubah kata kunci atau filter, atau tambahkan pengguna baru.</p></div></td></tr>
+            <tr>
+              <td colspan="7" class="py-12 text-center">
+                <div class="mx-auto max-w-sm">
+                  <p class="font-semibold text-slate-700">Belum ada pengguna yang sesuai</p>
+                  <p class="mt-1 text-sm text-slate-500">Coba ubah kata kunci atau filter, atau tambahkan pengguna baru.</p>
+                </div>
+              </td>
+            </tr>
           </template>
           <template x-for="(item, idx) in user" :key="item.id_pengguna">
             <tr class="hover:bg-slate-50/80">
@@ -81,7 +91,9 @@
               <td>
                 <div class="text-sm text-slate-600" x-text="item.no_hp || '-' "></div>
               </td>
-              <td><div class="max-w-56 truncate text-sm text-slate-600" :title="item.alamat || '-'" x-text="item.alamat || '-' "></div></td>
+              <td>
+                <div class="max-w-56 truncate text-sm text-slate-600" :title="item.alamat || '-'" x-text="item.alamat || '-' "></div>
+              </td>
               <td><span class="status-badge" :class="roleClass(item.role)" x-text="roleLabel(item.role)"></span></td>
               <td>
                 <span class="status-success" x-show="Number(item.is_verified) === 1">Terverifikasi</span>
@@ -101,8 +113,15 @@
 
     <!-- Mobile -->
     <div class="divide-y divide-slate-100 md:hidden">
-      <template x-if="loading"><div class="px-4 py-12 text-center text-sm text-slate-500">Memuat data pengguna...</div></template>
-      <template x-if="!loading && !error && user.length === 0"><div class="px-4 py-12 text-center"><p class="font-semibold text-slate-700">Belum ada pengguna yang sesuai</p><p class="mt-1 text-sm text-slate-500">Ubah filter atau tambahkan pengguna baru.</p></div></template>
+      <template x-if="loading">
+        <div class="px-4 py-12 text-center text-sm text-slate-500">Memuat data pengguna...</div>
+      </template>
+      <template x-if="!loading && !error && user.length === 0">
+        <div class="px-4 py-12 text-center">
+          <p class="font-semibold text-slate-700">Belum ada pengguna yang sesuai</p>
+          <p class="mt-1 text-sm text-slate-500">Ubah filter atau tambahkan pengguna baru.</p>
+        </div>
+      </template>
       <template x-for="item in user" :key="item.id_pengguna">
         <article class="space-y-4 p-4">
           <div class="flex items-start justify-between gap-3">
@@ -113,9 +132,18 @@
             <span class="status-badge shrink-0" :class="roleClass(item.role)" x-text="roleLabel(item.role)"></span>
           </div>
           <dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-            <div><dt class="text-xs font-medium text-slate-400">Nomor HP</dt><dd class="mt-0.5 text-slate-700" x-text="item.no_hp || '-' "></dd></div>
-            <div><dt class="text-xs font-medium text-slate-400">Verifikasi</dt><dd class="mt-1"><span class="status-success" x-show="Number(item.is_verified) === 1">Terverifikasi</span><span class="status-warning" x-show="Number(item.is_verified) !== 1">Belum verifikasi</span></dd></div>
-            <div class="sm:col-span-2"><dt class="text-xs font-medium text-slate-400">Alamat</dt><dd class="mt-0.5 text-slate-700" x-text="item.alamat || '-' "></dd></div>
+            <div>
+              <dt class="text-xs font-medium text-slate-400">Nomor HP</dt>
+              <dd class="mt-0.5 text-slate-700" x-text="item.no_hp || '-' "></dd>
+            </div>
+            <div>
+              <dt class="text-xs font-medium text-slate-400">Verifikasi</dt>
+              <dd class="mt-1"><span class="status-success" x-show="Number(item.is_verified) === 1">Terverifikasi</span><span class="status-warning" x-show="Number(item.is_verified) !== 1">Belum verifikasi</span></dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-xs font-medium text-slate-400">Alamat</dt>
+              <dd class="mt-0.5 text-slate-700" x-text="item.alamat || '-' "></dd>
+            </div>
           </dl>
           <div class="grid grid-cols-2 gap-2">
             <button type="button" @click="edit(item)" class="admin-action-secondary w-full">Edit</button>
@@ -129,7 +157,11 @@
   <!-- PAGINATION -->
   <div class="flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
     <label class="flex items-center gap-2">Tampilkan
-      <select x-model.number="pagination.limit" @change="pagination.page = 1; load()" class="input w-auto py-2"><option value="10">10</option><option value="25">25</option><option value="50">50</option></select>
+      <select x-model.number="pagination.limit" @change="pagination.page = 1; load()" class="input w-auto py-2">
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
       dari <span class="font-semibold text-slate-800" x-text="pagination.total"></span>
     </label>
     <div class="flex flex-wrap gap-2">
@@ -161,7 +193,10 @@
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div class="flex min-w-0 gap-3">
                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" :class="form.is_verified ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'">
-                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.5 3 7.6 7 9 4-1.4 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 3 5 6v5c0 4.5 3 7.6 7 9 4-1.4 7-4.5 7-9V6l-7-3Z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
                 </div>
                 <div class="min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
@@ -182,7 +217,10 @@
 
           <!-- Account information -->
           <div class="space-y-4">
-            <div><h3 class="text-sm font-bold text-slate-900">Informasi akun</h3><p class="mt-1 text-xs text-slate-500">Data utama yang digunakan untuk mengenali dan mengakses akun.</p></div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Informasi akun</h3>
+              <p class="mt-1 text-xs text-slate-500">Data utama yang digunakan untuk mengenali dan mengakses akun.</p>
+            </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div class="sm:col-span-2">
                 <label class="label">Nama User *</label>
@@ -202,7 +240,10 @@
               <div>
                 <label class="label">Role *</label>
                 <select x-model="form.role" class="input w-full" required>
-                  <option value="pelanggan">Pelanggan</option><option value="admin">Admin</option><option value="pimpinan">Pimpinan</option>
+                  <option value="pelanggan">Pelanggan</option>
+                  <option value="admin">Admin</option>
+                  <option value="kasir">Kasir</option>
+                  <option value="pimpinan">Pimpinan</option>
                 </select>
                 <p class="form-help">Role menentukan hak akses pengguna di sistem.</p>
               </div>
@@ -216,7 +257,10 @@
 
           <!-- Password -->
           <div class="space-y-4 border-t border-slate-100 pt-5">
-            <div><h3 class="text-sm font-bold text-slate-900">Keamanan akun</h3><p class="mt-1 text-xs text-slate-500" x-text="editingId ? 'Kosongkan password jika tidak ingin mengubahnya.' : 'Buat password yang akan digunakan pengguna untuk masuk ke sistem.'"></p></div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Keamanan akun</h3>
+              <p class="mt-1 text-xs text-slate-500" x-text="editingId ? 'Kosongkan password jika tidak ingin mengubahnya.' : 'Buat password yang akan digunakan pengguna untuk masuk ke sistem.'"></p>
+            </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
                 <label class="label">Password <span x-show="!editingId">*</span></label>
@@ -251,66 +295,172 @@
 <script>
   function userPage() {
     return {
-      user: [], search: utils.getQuery('search') ?? '', role: utils.getQuery('role') ?? '', error: '', loading: false,
-      pagination: { page: Number(utils.getQuery('page') || 1), total: 0, total_pages: 1, limit: Number(utils.getQuery('limit') || 10) },
-      showModal: false, editingId: null, saving: false, verifying: false, formError: '', showPassword: false,
-      form: { nama: '', email: '', no_hp: '', alamat: '', password: '', rePassword: '', role: 'pelanggan', is_verified: false },
+      user: [],
+      search: utils.getQuery('search') ?? '',
+      role: utils.getQuery('role') ?? '',
+      error: '',
+      loading: false,
+      pagination: {
+        page: Number(utils.getQuery('page') || 1),
+        total: 0,
+        total_pages: 1,
+        limit: Number(utils.getQuery('limit') || 10)
+      },
+      showModal: false,
+      editingId: null,
+      saving: false,
+      verifying: false,
+      formError: '',
+      showPassword: false,
+      form: {
+        nama: '',
+        email: '',
+        no_hp: '',
+        alamat: '',
+        password: '',
+        rePassword: '',
+        role: 'pelanggan',
+        is_verified: false
+      },
 
-      async init() { await this.load() },
+      async init() {
+        await this.load()
+      },
       async load() {
-        this.loading = true; this.error = ''
+        this.loading = true;
+        this.error = ''
         try {
           const res = await API.get('/user/list?search=' + encodeURIComponent(this.search) + '&role=' + encodeURIComponent(this.role) + '&limit=' + this.pagination.limit + '&page=' + this.pagination.page)
           if (!res.success) throw new Error(res.message || 'Data user gagal dimuat.')
           this.user = res.data || []
           this.pagination.total = Number(res.pagination?.total || 0)
           this.pagination.total_pages = Math.max(1, Number(res.pagination?.total_pages || Math.ceil(this.pagination.total / this.pagination.limit)))
-          utils.setQuery('search', this.search); utils.setQuery('role', this.role); utils.setQuery('page', this.pagination.page); utils.setQuery('limit', this.pagination.limit)
-        } catch (err) { this.error = err.message || 'Terjadi kesalahan saat memuat data user.'; this.user = [] }
-        finally { this.loading = false }
+          utils.setQuery('search', this.search);
+          utils.setQuery('role', this.role);
+          utils.setQuery('page', this.pagination.page);
+          utils.setQuery('limit', this.pagination.limit)
+        } catch (err) {
+          this.error = err.message || 'Terjadi kesalahan saat memuat data user.';
+          this.user = []
+        } finally {
+          this.loading = false
+        }
       },
-      resetFilter() { this.search = ''; this.role = ''; this.pagination.page = 1; this.load() },
-      roleLabel(role) { return ({ pelanggan: 'Pelanggan', admin: 'Admin', pimpinan: 'Pimpinan' })[role] || role },
-      roleClass(role) { return role === 'admin' ? 'bg-red-50 text-red-700' : role === 'pimpinan' ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700' },
+      resetFilter() {
+        this.search = '';
+        this.role = '';
+        this.pagination.page = 1;
+        this.load()
+      },
+      roleLabel(role) {
+        return ({
+          pelanggan: 'Pelanggan',
+          admin: 'Admin',
+          kasir: 'Kasir',
+          pimpinan: 'Pimpinan'
+        })[role] || role
+      },
+      roleClass(role) {
+        return role === 'admin' ? 'bg-red-50 text-red-700' : role === 'kasir' ? 'bg-amber-50 text-amber-700' : role === 'pimpinan' ? 'bg-violet-50 text-violet-700' : 'bg-blue-50 text-blue-700'
+      },
       openCreate() {
-        this.editingId = null; this.formError = ''; this.showPassword = false
-        this.form = { nama: '', email: '', no_hp: '', alamat: '', password: '', rePassword: '', role: 'pelanggan', is_verified: true }
+        this.editingId = null;
+        this.formError = '';
+        this.showPassword = false
+        this.form = {
+          nama: '',
+          email: '',
+          no_hp: '',
+          alamat: '',
+          password: '',
+          rePassword: '',
+          role: 'pelanggan',
+          is_verified: true
+        }
         this.showModal = true
       },
       edit(item) {
-        this.editingId = item.id_pengguna; this.formError = ''; this.showPassword = false
-        this.form = { nama: item.nama || '', email: item.email || '', no_hp: item.no_hp || '', alamat: item.alamat || '', password: '', rePassword: '', role: item.role || 'pelanggan', is_verified: Number(item.is_verified) === 1 }
+        this.editingId = item.id_pengguna;
+        this.formError = '';
+        this.showPassword = false
+        this.form = {
+          nama: item.nama || '',
+          email: item.email || '',
+          no_hp: item.no_hp || '',
+          alamat: item.alamat || '',
+          password: '',
+          rePassword: '',
+          role: item.role || 'pelanggan',
+          is_verified: Number(item.is_verified) === 1
+        }
         this.showModal = true
       },
       closeModal() {
-        this.showModal = false; this.editingId = null; this.saving = false; this.verifying = false; this.formError = ''; this.showPassword = false
-        this.form = { nama: '', email: '', no_hp: '', alamat: '', password: '', rePassword: '', role: 'pelanggan', is_verified: false }
+        this.showModal = false;
+        this.editingId = null;
+        this.saving = false;
+        this.verifying = false;
+        this.formError = '';
+        this.showPassword = false
+        this.form = {
+          nama: '',
+          email: '',
+          no_hp: '',
+          alamat: '',
+          password: '',
+          rePassword: '',
+          role: 'pelanggan',
+          is_verified: false
+        }
       },
       async save() {
-        this.saving = true; this.formError = ''
+        this.saving = true;
+        this.formError = ''
         try {
           if (!this.editingId && this.form.password !== this.form.rePassword) throw new Error('Konfirmasi password tidak cocok.')
-          if (this.editingId) await API.put('/user', { ...this.form, id_pengguna: this.editingId })
+          if (this.editingId) await API.put('/user', {
+            ...this.form,
+            id_pengguna: this.editingId
+          })
           else await API.post('/user', this.form)
           Alpine.store('ui').toast(this.editingId ? 'User berhasil diperbarui.' : 'User berhasil ditambahkan dan terverifikasi.')
-          this.closeModal(); await this.load()
-        } catch (err) { this.formError = err.message || 'User gagal disimpan.' }
-        finally { this.saving = false }
+          this.closeModal();
+          await this.load()
+        } catch (err) {
+          this.formError = err.message || 'User gagal disimpan.'
+        } finally {
+          this.saving = false
+        }
       },
       async hapus(id_pengguna) {
         const ok = await Alpine.store('ui').confirm('Yakin ingin menghapus user ini? Data akun akan dihapus dan tindakan ini tidak dapat dibatalkan.')
         if (!ok) return
-        try { await API.delete('/user', { id_pengguna }); Alpine.store('ui').toast('User berhasil dihapus.'); await this.load() }
-        catch (err) { Alpine.store('ui').toast(err.message || 'User gagal dihapus.') }
+        try {
+          await API.delete('/user', {
+            id_pengguna
+          });
+          Alpine.store('ui').toast('User berhasil dihapus.');
+          await this.load()
+        } catch (err) {
+          Alpine.store('ui').toast(err.message || 'User gagal dihapus.')
+        }
       },
       async verifikasiAkun(id) {
         if (!id || this.verifying) return
         const ok = await Alpine.store('ui').confirm('Pastikan data akun sudah benar sebelum melanjutkan verifikasi. Lanjutkan?')
         if (!ok) return
-        this.verifying = true; this.formError = ''
-        try { await API.put(`/user/${id}/verify`); this.form.is_verified = true; Alpine.store('ui').toast('Akun berhasil diverifikasi.'); await this.load() }
-        catch (err) { this.formError = err.message || 'Akun gagal diverifikasi.' }
-        finally { this.verifying = false }
+        this.verifying = true;
+        this.formError = ''
+        try {
+          await API.put(`/user/${id}/verify`);
+          this.form.is_verified = true;
+          Alpine.store('ui').toast('Akun berhasil diverifikasi.');
+          await this.load()
+        } catch (err) {
+          this.formError = err.message || 'Akun gagal diverifikasi.'
+        } finally {
+          this.verifying = false
+        }
       }
     }
   }

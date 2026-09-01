@@ -9,7 +9,7 @@ class AdminController
 
   public function kasir()
   {
-    view('admin/kasir', ['title' => 'Kasir'], 'admin');
+    view('admin/kasir', ['title' => 'Kasir'], 'kasir');
   }
 
   public function pesanan()

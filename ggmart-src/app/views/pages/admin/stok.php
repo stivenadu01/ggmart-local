@@ -14,10 +14,12 @@
       </p>
     </div>
 
-    <a href="<?= BASE_URL ?>/admin/stok/form" class="btn-primary w-full sm:w-auto">
-      <span aria-hidden="true">+</span>
-      <span>Tambah Perubahan Stok</span>
-    </a>
+    <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+      <a href="<?= BASE_URL ?>/admin/stok/form" class="btn-primary w-full sm:w-auto">
+        <span aria-hidden="true">+</span>
+        <span>Tambah Perubahan Stok</span>
+      </a>
+    <?php endif; ?>
   </header>
 
   <!-- SUMMARY -->
@@ -206,13 +208,15 @@
                   <button type="button" @click="lihatBatch(item.kode_produk, item.nama_produk)" class="admin-action-secondary admin-action-sm">
                     Batch
                   </button>
-                  <button
-                    type="button"
-                    x-show="item.type === 'masuk'"
-                    @click="hapus(item.id_mutasi)"
-                    class="admin-action-danger admin-action-sm">
-                    Hapus
-                  </button>
+                  <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+                    <button
+                      type="button"
+                      x-show="item.type === 'masuk'"
+                      @click="hapus(item.id_mutasi)"
+                      class="admin-action-danger admin-action-sm">
+                      Hapus
+                    </button>
+                  <?php endif; ?>
                 </div>
               </td>
             </tr>
@@ -269,13 +273,15 @@
             <button type="button" @click="lihatBatch(item.kode_produk, item.nama_produk)" class="admin-action-secondary flex-1">
               Lihat Batch
             </button>
-            <button
-              type="button"
-              x-show="item.type === 'masuk'"
-              @click="hapus(item.id_mutasi)"
-              class="admin-action-danger flex-1">
-              Hapus
-            </button>
+            <?php if (in_array($_SESSION['user']['role'] ?? '', ['admin'], true)): ?>
+              <button
+                type="button"
+                x-show="item.type === 'masuk'"
+                @click="hapus(item.id_mutasi)"
+                class="admin-action-danger flex-1">
+                Hapus
+              </button>
+            <?php endif; ?>
           </div>
         </article>
       </template>
@@ -497,7 +503,9 @@
         const total = this.pagination.total_pages
         const current = this.pagination.page
 
-        if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1)
+        if (total <= 5) return Array.from({
+          length: total
+        }, (_, i) => i + 1)
 
         const pages = [1]
         if (current > 3) pages.push('…')
@@ -549,7 +557,9 @@
         if (!ok) return
 
         try {
-          const res = await API.delete('/mutasi', { id })
+          const res = await API.delete('/mutasi', {
+            id
+          })
           if (!res.success) throw new Error(res.message || 'Mutasi gagal dihapus.')
           Alpine.store('ui').toast('Mutasi stok berhasil dihapus')
           await Promise.all([this.load(), this.loadSummary()])

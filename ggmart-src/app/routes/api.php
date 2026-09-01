@@ -14,7 +14,7 @@ delete('/api/kategori', 'ApiKategoriController@hapus', ["role:admin"]);
 get('/api/produk/list', 'ApiProdukController@list', ["role:admin,pimpinan"]);
 get('/api/produk/terkait', 'ApiProdukController@terkait');
 get('/api/produk/detail', 'ApiProdukController@detail');
-get('/api/produk/trx', 'ApiProdukController@trx', ["role:admin"]);
+get('/api/produk/trx', 'ApiProdukController@trx', ["role:admin,kasir"]);
 get('/api/produk/dropdown', 'ApiProdukController@dropdown', ["role:admin,pimpinan"]);
 get('/api/produk/public', 'ApiProdukController@public');
 get('/api/produk/landing', 'ApiProdukController@landing');
@@ -48,13 +48,13 @@ delete('/api/mutasi', 'ApiMutasiStokController@hapus', ["role:admin"]);
 get('/api/transaksi/list', 'ApiTransaksiController@list', ["auth"]);
 get('/api/transaksi/detail', 'ApiTransaksiController@detail', ["auth"]);
 
-post('/api/transaksi', 'ApiTransaksiController@tambah_transaksi', ["role:admin"]); // kasir admin only
+post('/api/transaksi', 'ApiTransaksiController@tambah_transaksi', ["role:admin,kasir"]); // admin dan kasir
 post('/api/transaksi/user', 'ApiTransaksiController@tambah_transaksi_user', ["role:pelanggan"]); // pesanan pelanggan
 
-post('/api/transaksi/proses', 'ApiTransaksiController@proses_transaksi', ["role:admin"]); // proses
-post('/api/transaksi/konfirmasi', 'ApiTransaksiController@konfirmasi_transaksi', ["role:admin"]); // selesai
+post('/api/transaksi/proses', 'ApiTransaksiController@proses_transaksi', ["role:admin,kasir"]); // proses
+post('/api/transaksi/konfirmasi', 'ApiTransaksiController@konfirmasi_transaksi', ["role:admin,kasir"]); // selesai
 
-post('/api/transaksi/batal', 'ApiTransaksiController@batal_transaksi', ["role:admin"]); // admin
+post('/api/transaksi/batal', 'ApiTransaksiController@batal_transaksi', ["role:admin,kasir"]); // admin & kasir
 post('/api/transaksi/batal-pending', 'ApiTransaksiController@batal_transaksi_pending', ["role:pelanggan"]); // pending pelanggan
 
 

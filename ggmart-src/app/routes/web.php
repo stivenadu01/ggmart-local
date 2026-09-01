@@ -17,7 +17,7 @@ get('/profil', 'UserController@profil', ['auth']);
 
 // ADMIN
 get('/admin', 'AdminController@dashboard', ['role:admin,pimpinan']);
-get('/admin/kasir', 'AdminController@kasir', ['role:admin']);
+get('/admin/kasir', 'AdminController@kasir', ['role:admin,kasir']);
 get('/admin/pesanan', 'AdminController@pesanan', ['role:admin']);
 get('/admin/kategori', 'AdminController@kategori', ['role:admin,pimpinan']);
 get('/admin/produk', 'AdminController@produk', ['role:admin,pimpinan']);

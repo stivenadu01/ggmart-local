@@ -143,7 +143,7 @@
 
           Alpine.store('ui').toast('Login berhasil.');
           const role = res.data?.role || 'pelanggan';
-          const destination = ['admin', 'pimpinan'].includes(role) ? '/admin' : '/';
+          const destination = role === 'kasir' ? '/admin/kasir' : ['admin', 'pimpinan'].includes(role) ? '/admin' : '/';
           setTimeout(() => {
             window.location.href = BASE_URL + destination;
           }, 500);

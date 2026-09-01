@@ -4,14 +4,15 @@ $role = $user['role'] ?? 'admin';
 $roleLabel = ucfirst($role);
 $roleDescriptions = [
   'admin' => 'Memiliki akses penuh untuk mengelola operasional dan administrasi GG-Mart.',
+  'kasir' => 'Memiliki akses terbatas untuk menangani transaksi toko melalui halaman kasir.',
   'pimpinan' => 'Memiliki akses untuk memantau produk, stok, transaksi, dan laporan.',
   'user' => 'Akun pengguna yang digunakan untuk aktivitas pelanggan.',
 ];
 $roleDescription = $roleDescriptions[$role] ?? 'Hak akses mengikuti role akun yang sedang digunakan.';
 
 $permissions = [
-  'Dashboard' => true,
-  'Kasir' => $role === 'admin',
+  'Dashboard' => in_array($role, ['admin', 'pimpinan'], true),
+  'Kasir' => in_array($role, ['admin', 'kasir'], true),
   'Pesanan' => $role === 'admin',
   'Kategori' => in_array($role, ['admin', 'pimpinan'], true),
   'Produk' => in_array($role, ['admin', 'pimpinan'], true),
